@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"lab-reverse/app/middleware"
 	"lab-reverse/app/model"
+	"lab-reverse/app/service"
 	"lab-reverse/constant"
+	"net/http"
 	"time"
 )
 
@@ -14,7 +16,7 @@ type LoginResult struct {
 	Name  string
 	Token string
 }
-
+//
 //func Register(c *gin.Context) {
 //	var user model.User
 //
@@ -59,6 +61,21 @@ func Test(c *gin.Context) {
 		return
 	}
 
+
+	fmt.Println(model.DB)
+	email:="zhangsan@qq.com"
+	//TODO 查找数据库
+	user, err := service.FindUserByEmail(email)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.LoginFail,
+			"msg":    err.Error(),
+			"data":   "登录失败",
+		})
+		return
+	}
+	fmt.Println(user)
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": constant.LoginSuccess,
 		"msg":    "登陆成功",
@@ -80,6 +97,8 @@ func TestToken(c *gin.Context) {
 		return
 	}
 
+
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": -1,
 		"msg":    "token失效",
@@ -90,57 +109,57 @@ func TestToken(c *gin.Context) {
 }
 
 // Login 登陆
-//func Login(c *gin.Context) {
-//	var u model.User
-//	if err := c.ShouldBindJSON(&u); err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{
-//			"status": constant.LoginFail,
-//			"msg":    "登录失败",
-//			"data":   err.Error(),
-//		})
-//		return
-//	}
-//
-//	//TODO 查找数据库
-//	user, err := service.FindUserByEmail(u.Email)
-//	if err != nil {
-//		c.JSON(http.StatusOK, gin.H{
-//			"status": constant.LoginFail,
-//			"msg":    err.Error(),
-//			"data":   "登录失败",
-//		})
-//		return
-//	}
-//
-//	// 密码错误
-//	if u.Password != user.Password {
-//		c.JSON(http.StatusOK, gin.H{
-//			"status": constant.LoginFail,
-//			"msg":    "登录失败",
-//			"data":   err.Error(),
-//		})
-//		return
-//	}
-//
-//	token := generateToken(c, *user)
-//	var role string
-//	// 用户角色
-//	if len(user.Role) == 0 {
-//		role = "user"
-//	} else {
-//		role = user.Role[0].RoleName
-//	}
-//	c.JSON(http.StatusOK, gin.H{
-//		"status": constant.LoginSuccess,
-//		"msg":    "登陆成功",
-//		"data": gin.H{
-//			"token": token,
-//			"role":  role,
-//		},
-//	})
-//
-//	return
-//}
+func Login(c *gin.Context) {
+	var u model.User
+	if err := c.ShouldBindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.LoginFail,
+			"msg":    "登录失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	//TODO 查找数据库
+	user, err := service.FindUserByEmail(u.Email)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.LoginFail,
+			"msg":    err.Error(),
+			"data":   "登录失败",
+		})
+		return
+	}
+
+	// 密码错误
+	if u.Password != user.Password {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.LoginFail,
+			"msg":    "登录失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	token := generateToken(c, *user)
+	var role string
+	// 用户角色
+	//if len(user.Role) == 0 {
+	//	role = "user"
+	//} else {
+	//	role = user.Role[0].RoleName
+	//}
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.LoginSuccess,
+		"msg":    "登陆成功",
+		"data": gin.H{
+			"token": token,
+			"role":  role,
+		},
+	})
+
+	return
+}
 
 // token生成器
 func generateToken(c *gin.Context, user model.User) string {
@@ -155,7 +174,7 @@ func generateToken(c *gin.Context, user model.User) string {
 			// 签名生效时间
 			ExpiresAt: int64(time.Now().Unix() + 36000),
 			// 签名过期时间
-			Issuer: "bgbiao.top",
+			Issuer: "lab-reverse",
 			// 签名颁发者
 		},
 	}
@@ -170,4 +189,35 @@ func generateToken(c *gin.Context, user model.User) string {
 	}
 
 	return token
+}
+
+// 预定座位
+func ReverseSeat(c *gin.Context) {
+	var s model.Seat
+	if err := c.ShouldBindJSON(&s); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.LoginFail,
+			"msg":    "预定失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	//TODO 查找数据库s
+	err := service.ReverseSeat(s)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.LoginFail,
+			"msg":    err.Error(),
+			"data":   "预定失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.LoginSuccess,
+		"msg":    "预定成功",
+	})
+
+	return
 }

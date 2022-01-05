@@ -100,3 +100,32 @@ CREATE TABLE `competition_student`(
     `score` INT
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `lab_seat`(
+      `id` INT PRIMARY KEY auto_increment,
+      `number` INT ,
+      `lab_name` VARCHAR(255)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO lab_seat(`id`, `number`, `lab_name`)
+VALUES(0, 1, '实验室测试');
+
+CREATE TABLE books (
+       `id` int unsigned NOT NULL AUTO_INCREMENT,
+       `user_id` int unsigned NOT NULL,
+       `lab_id` int unsigned NOT NULL DEFAULT 0,
+       `seat_id` int unsigned NOT NULL,
+       `start_time` TIMESTAMP NOT NULL,
+       `end_time` TIMESTAMP NOT NULL,
+       PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+CREATE TABLE seats (
+       `id` int unsigned NOT NULL AUTO_INCREMENT,
+       `seat_id` int unsigned NOT NULL,
+       `lab_id` int unsigned NOT NULL DEFAULT 0,
+       PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+insert into seats (id, seat_id, lab_id) values (0,1,0);
+insert into seats (id, seat_id, lab_id) values (1,2,0);
+insert into seats (id, seat_id, lab_id) values (2,3,0);
+insert into seats (id, seat_id, lab_id) values (3,4,0);
