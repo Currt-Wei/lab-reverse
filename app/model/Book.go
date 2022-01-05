@@ -11,7 +11,7 @@ type Book struct {
 }
 
 func (B Book) TableName() string {
-	return "seats"
+	return "books"
 }
 
 func ReverseSeat(book Book) error {

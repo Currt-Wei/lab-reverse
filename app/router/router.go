@@ -24,6 +24,8 @@ func InitRouter() {
 
 	r.POST("/test", controller.Test)
 	r.POST("/reverseSeat", controller.ReverseSeat)
+	r.GET("/findAllUser", controller.FindAllUser)
+	r.POST("/addSeat", controller.AddSeat)
 
 	err := r.Run()
 	if err != nil {

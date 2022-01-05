@@ -54,4 +54,6 @@
 
 ## 初步设计
 ### 1.1 座位预约
+![大概思路](blob:https://przm2orhje.feishu.cn/7a087b39-6619-4c0d-9107-8969e5af4aaa)
+### 1.2 操作
 ![大概思路](blob:https://przm2orhje.feishu.cn/038ddcbd-ac3d-4c7e-a306-effb270de318)
