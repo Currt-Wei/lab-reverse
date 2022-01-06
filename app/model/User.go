@@ -4,19 +4,25 @@ import "lab-reverse/app/middleware/log"
 
 
 type User struct {
-	Id         int    `gorm:"column:id" json:"id"`
-	Name       string `gorm:"column:name" json:"name"`
-	Email      string `gorm:"column:email" json:"email"`
-	Password   string `gorm:"column:password" json:"password"`
-	StuNo      string `gorm:"column:stu_no" json:"stu_no"`
-	StuCollege string `gorm:"column:stu_college" json:"stu_college"`
-	StuGrade   string `gorm:"column:stu_grade" json:"stu_grade"`
+	Id uint `json:"id"`
+	CreatedAt Time	`gorm:"type:timestamp;autoCreatTime" json:"created_at" swaggerignore:"true"`
+	UpdatedAt Time `gorm:"type:timestamp;autoUpdateTime" json:"updated_at" swaggerignore:"true"`
+	Account string	`gorm:"type:char(12);not null;uniqueIndex" json:"account" validate:"required"`
+	Name string		`gorm:"type:varchar(50)" validate:"required"`
+	Email string	`gorm:"type:varchar(50)" validate:"required,email"`
+	Telephone string	`gorm:"type:varchar(11)" validate:"required,len=11"`
+	College string		`gorm:"type:varchar(50)"`
+	Password string		`gorm:"type:varchar(255)" validate:"required"`
+	Degree string		`gorm:"type:varchar(10)"`
+	Grade string		`gorm:"type:varchar(10)"`
+	Identity string		`gorm:"type:varchar(10);default:student"`
+	Enable int			`gorm:"type:smallint;default:1" json:"enable"`
 
-	//Role []Role `gorm:"many2many:user_role" json:"-"`
+	RoleName string		`gorm:"type:varchar(10);default:user"`
 }
 
 func (S User) TableName() string {
-	return "users"
+	return "user"
 }
 
 // GetAllUsers 查询所有用户

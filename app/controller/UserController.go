@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"lab-reverse/app/middleware"
@@ -15,72 +14,6 @@ import (
 type LoginResult struct {
 	Name  string
 	Token string
-}
-//
-//func Register(c *gin.Context) {
-//	var user model.User
-//
-//	if err := c.ShouldBind(&user); err != nil {
-//		c.JSON(http.StatusOK, gin.H{
-//			"status": constant.RegisterFail,
-//			"msg":    err.Error(),
-//			"data":   nil,
-//		})
-//		return
-//	}
-//
-//	err := service.AddUser(&user)
-//	if err != nil {
-//		c.JSON(http.StatusOK, gin.H{
-//			"status": constant.RegisterFail,
-//			"msg":    err.Error(),
-//			"data":   nil,
-//		})
-//		return
-//	}
-//
-//	c.JSON(http.StatusOK, gin.H{
-//		"status": constant.RegisterSuccess,
-//		"msg":    "注册成功",
-//		"data":   nil,
-//	})
-//
-//	// 给该用户添加普通用户的身份
-//	//casbin.CasbinObj.Enforcer.AddRoleForUser(user.Email, "user")
-//
-//}
-
-func Test(c *gin.Context) {
-	var u model.User
-	if err := c.ShouldBindJSON(&u); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": constant.LoginFail,
-			"msg":    "登录失败",
-			"data":   err.Error(),
-		})
-		return
-	}
-
-
-	fmt.Println(model.DB)
-	email:="zhangsan@qq.com"
-	//TODO 查找数据库
-	user, err := service.FindUserByEmail(email)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": constant.LoginFail,
-			"msg":    err.Error(),
-			"data":   "登录失败",
-		})
-		return
-	}
-	fmt.Println(user)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": constant.LoginSuccess,
-		"msg":    "登陆成功",
-		"data": gin.H{},
-	})
 }
 
 // 定义一个普通controller函数，作为一个验证接口逻辑

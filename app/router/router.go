@@ -22,10 +22,13 @@ func InitRouter() {
 	// 权限验证
 	//r.Use(middleware.Authorize())
 
-	r.POST("/test", controller.Test)
 	r.POST("/reverseSeat", controller.ReverseSeat)
 	r.GET("/findAllUser", controller.FindAllUser)
 	r.POST("/addSeat", controller.AddSeat)
+	r.POST("/addLab",controller.AddLab)
+	r.POST("/updateLabInfo",controller.UpdateLabInfo)
+	r.GET("/findAllLab",controller.FindAllLab)
+	r.POST("/deleteLab",controller.DeleteLab)
 
 	err := r.Run()
 	if err != nil {
