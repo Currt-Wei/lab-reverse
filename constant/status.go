@@ -10,6 +10,8 @@ const UpdateLabSuccess string = "BS2006"			// 更新实验室成功
 const AddLabSuccess string = "BS2007"			// 添加实验室成功
 const FindAllLabSuccess string = "BS2008"		// 查找所有实验室成功
 const DeleteLabSuccess string = "BS2009"		// 删除实验室成功
+const ReserveSeatSuccess string = "BS2010"		// 预约实验室成功
+const SearchSeatSuccess string = "BS2011"		// 查询实验室成功
 
 // fail
 const LoginFail string = "BS4001"             // 登陆失败
@@ -21,4 +23,6 @@ const UpdateLabFail string = "BS4006"          // 更新实验室失败
 const AddLabFail string = "BS4007"          // 添加实验室失败
 const FindAllLabFail string = "BS2008"		// 查找所有实验室失败
 const DeleteLabFail string = "BS4009"		// 删除实验室失败
+const ReserveSeatFail string = "BS4010"		// 预约实验室失败
+const SearchSeatFail string = "BS4011"		// 查询实验室失败
 

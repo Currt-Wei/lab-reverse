@@ -29,8 +29,3 @@ func FindUserByEmail(email string) (*model.User, error) {
 	user1, err := model.GetUserByEmail(email)
 	return user1, err
 }
-
-func ReverseSeat(book model.Book) error {
-	err:=model.ReverseSeat(book)
-	return err
-}

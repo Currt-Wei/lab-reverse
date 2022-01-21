@@ -124,33 +124,3 @@ func generateToken(c *gin.Context, user model.User) string {
 	return token
 }
 
-// 预定座位
-func ReverseSeat(c *gin.Context) {
-	var b model.Book
-	if err := c.ShouldBindJSON(&b); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": constant.ReverseSeatFail,
-			"msg":    "预定失败",
-			"data":   err.Error(),
-		})
-		return
-	}
-
-	//TODO 查找数据库s
-	err := service.ReverseSeat(b)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": constant.ReverseSeatFail,
-			"msg":    err.Error(),
-			"data":   "预定失败",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": constant.ReverseSeatSuccess,
-		"msg":    "预定成功",
-	})
-
-	return
-}

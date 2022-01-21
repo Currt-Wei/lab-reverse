@@ -22,7 +22,8 @@ func InitRouter() {
 	// 权限验证
 	//r.Use(middleware.Authorize())
 
-	r.POST("/reverseSeat", controller.ReverseSeat)
+	r.POST("/reverseSeat", controller.ReserveSeat)
+	r.POST("/searchSeat", controller.SearchSeat)
 	r.GET("/findAllUser", controller.FindAllUser)
 	r.POST("/addSeat", controller.AddSeat)
 	r.POST("/addLab",controller.AddLab)
