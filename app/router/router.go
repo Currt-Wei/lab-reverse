@@ -24,6 +24,8 @@ func InitRouter() {
 
 	r.POST("/reverseSeat", controller.ReserveSeat)
 	r.POST("/searchSeat", controller.SearchSeat)
+	r.POST("/getInfoByEmail", controller.GetInfoByEmail)
+	r.GET("/getReserveInfo", controller.GetReserveInfo)
 	r.GET("/findAllUser", controller.FindAllUser)
 	r.POST("/addSeat", controller.AddSeat)
 	r.POST("/addLab",controller.AddLab)

@@ -8,6 +8,8 @@ import (
 	"lab-reverse/app/service"
 	"lab-reverse/constant"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -124,3 +126,100 @@ func generateToken(c *gin.Context, user model.User) string {
 	return token
 }
 
+func GetInfoByEmail(c *gin.Context) {
+	var u model.User
+	if err := c.ShouldBindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.GetInfoByEmailFail,
+			"msg":    "查询失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	//TODO 查找数据库
+	user, err := service.FindUserByEmail(u.Email)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.GetInfoByEmailFail,
+			"msg":    err.Error(),
+			"data":   "查询失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.GetInfoByEmailSuccess,
+		"msg":    "查询成功",
+		"data": 	user,
+	})
+
+	return
+}
+
+func GetReserveInfo(c *gin.Context){
+	var u model.User
+	if err := c.ShouldBindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.GetReserveInfoFail,
+			"msg":    "查询失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	//TODO 查找数据库
+	user, err := service.FindUserByEmail(u.Email)
+	userId := user.Id
+
+	// 获取分页数据
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+
+	//users, err:=service.FindAllUser(data,limit,page)
+	offset := (page - 1) * limit
+
+	db:=model.DB
+	db = db.Limit(limit).Offset(offset)
+
+	var reserveInfo []model.Reservation
+	err = db.Where("user_id = ?", userId).Find(&reserveInfo).Error
+
+	var todo []model.Reservation
+	var done []model.Reservation
+ 	for _,info :=range reserveInfo {
+		interval :=strings.Split(info.TimeInterval,"-")
+		t,_ := time.ParseInLocation("2006-01-02 15:04:05", info.ReserveDate+" "+interval[0],time.Local)
+		if t.After(time.Now()){
+			todo = append(todo,info)
+		} else {
+			done = append(done, info)
+		}
+
+
+	}
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.GetReserveInfoFail,
+			"msg":    err.Error(),
+			"data":   "查询失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.GetReserveInfoSuccess,
+		"msg":    "查询成功",
+		//"data": 	reserveInfo,
+		"todo": 	todo,
+		"done":		done,
+	})
+
+	return
+}
+
+func DeleteReserve(c *gin.Context) {
+
+}

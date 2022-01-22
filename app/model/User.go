@@ -61,3 +61,10 @@ func GetUserById(id int) (*User, error) {
 func AddUser(user User) error {
 	return DB.Create(&user).Error
 }
+
+// 查询历史预约信息
+func GetReserveInfo(UserId uint) ([]Reservation,error){
+	var ReservationInfo []Reservation
+	err := DB.Where("user_id = ?", UserId).Find(&ReservationInfo).Error
+	return ReservationInfo,err
+}

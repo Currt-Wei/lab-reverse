@@ -12,6 +12,8 @@ const FindAllLabSuccess string = "BS2008"		// 查找所有实验室成功
 const DeleteLabSuccess string = "BS2009"		// 删除实验室成功
 const ReserveSeatSuccess string = "BS2010"		// 预约实验室成功
 const SearchSeatSuccess string = "BS2011"		// 查询实验室成功
+const GetInfoByEmailSuccess string = "BS2012"		// 查询实验室成功
+const GetReserveInfoSuccess string = "BS2013"		// 查询预约信息成功
 
 // fail
 const LoginFail string = "BS4001"             // 登陆失败
@@ -25,4 +27,6 @@ const FindAllLabFail string = "BS2008"		// 查找所有实验室失败
 const DeleteLabFail string = "BS4009"		// 删除实验室失败
 const ReserveSeatFail string = "BS4010"		// 预约实验室失败
 const SearchSeatFail string = "BS4011"		// 查询实验室失败
+const GetInfoByEmailFail string = "BS4012"		// 查询实验室失败
+const GetReserveInfoFail string = "BS4013"		// 查询预约信息失败
 
