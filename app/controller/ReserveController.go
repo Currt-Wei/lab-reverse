@@ -18,7 +18,20 @@ func ReserveSeat(c *gin.Context) {
 		return
 	}
 
-	err:=model.ReserveSeat(&r)
+	seat,err := model.FindSeatBySeatId(r.SeatId)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.ReserveSeatFail,
+			"msg":    err.Error(),
+			"data":   "添加失败",
+		})
+		return
+	}
+
+	r.SeatName=seat.SeatName
+
+	err=model.ReserveSeat(&r)
 
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -54,10 +67,10 @@ func SearchSeat(c *gin.Context) {
 
 	reservations, err:=model.SearchSeat(date,time,labId)
 
-	var seatIds []int
+	var seatNames []string
 
 	for _,reservation := range reservations{
-		seatIds=append(seatIds,reservation.SeatId)
+		seatNames=append(seatNames,reservation.SeatName)
 	}
 
 
@@ -73,7 +86,7 @@ func SearchSeat(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": constant.SearchSeatSuccess,
 		"msg":    "查询成功",
-		"data": seatIds,
+		"data": seatNames,
 	})
 
 	return

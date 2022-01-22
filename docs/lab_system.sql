@@ -11,23 +11,57 @@ CREATE TABLE laboratory (
     description varchar(500) DEFAULT NULL COMMENT '实验室信息描述',
     PRIMARY KEY (lab_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-insert into laboratory (lab_id, lab_name, lab_id) values (0,'b3-111',50);
-insert into laboratory (lab_id, lab_name, lab_id) values (1,'b3-222',50);
+insert into laboratory (lab_id, lab_name, person_number) values (1,'b3-234',40);
+insert into laboratory (lab_id, lab_name, person_number) values (2,'b3-351',50);
 
 CREATE TABLE seats (
    `id` int unsigned NOT NULL AUTO_INCREMENT,
    `seat_id` int unsigned NOT NULL,
    `lab_id` int unsigned NOT NULL DEFAULT 0,
+   `seat_name` varchar(100) NOT NULL,
    PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-insert into seats (id, seat_id, lab_id) values (0,1,0);
-insert into seats (id, seat_id, lab_id) values (1,2,0);
-insert into seats (id, seat_id, lab_id) values (2,3,0);
-insert into seats (id, seat_id, lab_id) values (3,1,1);
-insert into seats (id, seat_id, lab_id) values (4,2,1);
-insert into seats (id, seat_id, lab_id) values (5,3,1);
-insert into seats (id, seat_id, lab_id) values (6,4,1);
-insert into seats (id, seat_id, lab_id) values (7,5,1);
+insert into seats (id, seat_id, lab_id, seat_name) values (0,1,1,'A1');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,2,1,'A2');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,3,1,'A3');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,4,1,'A4');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,5,1,'A5');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,6,1,'A6');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,7,1,'A7');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,8,1,'A8');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,9,1,'B1');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,10,1,'B2');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,11,1,'B3');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,12,1,'B4');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,13,1,'B5');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,14,1,'B6');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,15,1,'B7');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,16,1,'B8');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,17,1,'C1');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,18,1,'C2');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,19,1,'C3');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,20,1,'C4');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,21,1,'C5');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,22,1,'C6');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,23,1,'C7');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,24,1,'C8');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,25,1,'D1');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,26,1,'D2');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,27,1,'D3');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,28,1,'D4');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,29,1,'D5');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,30,1,'D6');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,31,1,'D7');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,32,1,'D8');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,33,1,'E1');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,34,1,'E2');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,35,1,'E3');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,36,1,'E4');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,37,1,'E5');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,38,1,'E6');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,39,1,'E7');
+insert into seats (id, seat_id, lab_id, seat_name) values (0,40,1,'E8');
+
 
 
 CREATE TABLE reservation (
@@ -35,6 +69,7 @@ CREATE TABLE reservation (
      user_id int(10) DEFAULT NULL COMMENT '预约人id',
      lab_id int(10) DEFAULT NULL COMMENT '实验室id',
      seat_id int(10) DEFAULT NULL COMMENT '座位id',
+     seat_name varchar(100) NOT NULL,
      reserve_date varchar(100) DEFAULT NULL COMMENT '预约日期',
      time_interval varchar(100) DEFAULT NULL ,
      weekday int(10) DEFAULT NULL COMMENT '表示星期几，取值为1,2,3,4,5,6,7\r\n1--周一、2—周二\r\n3--周三、4—周四\r\n5--周五、6—周六\r\n7--周日',

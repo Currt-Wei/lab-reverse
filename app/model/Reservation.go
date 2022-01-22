@@ -5,6 +5,7 @@ type Reservation struct {
 	UserId     int    `gorm:"column:user_id" json:"user_id"`
 	LabId     int    `gorm:"column:lab_id" json:"lab_id"`
 	SeatId     int    `gorm:"column:seat_id" json:"seat_id"`
+	SeatName    string    `gorm:"column:seat_name" json:"seat_name"`
 	ReserveDate	 string    `gorm:"column:reserve_date" json:"reserve_date"`
 	TimeInterval     string    `gorm:"column:time_interval" json:"time_interval"`
 	Weekday     int    `gorm:"column:weekday" json:"weekday"`
