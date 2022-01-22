@@ -25,3 +25,7 @@ func SearchSeat(date, time string, labId int) ([]Reservation,error) {
 	err := DB.Where("lab_id = ? and reserve_date = ? and time_interval = ?", labId, date, time).Find(&reservations).Error
 	return reservations,err
 }
+
+func DeleteReserve(reservation *Reservation) error{
+	return DB.Where("seat_id=? and lab_id=? and reserve_date=? and time_interval=?",reservation.SeatId,reservation.LabId,reservation.ReserveDate,reservation.TimeInterval).Delete(&reservation).Error
+}

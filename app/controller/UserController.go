@@ -220,6 +220,3 @@ func GetReserveInfo(c *gin.Context){
 	return
 }
 
-func DeleteReserve(c *gin.Context) {
-
-}

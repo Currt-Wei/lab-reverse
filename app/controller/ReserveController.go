@@ -91,3 +91,34 @@ func SearchSeat(c *gin.Context) {
 
 	return
 }
+
+// 删除预约
+func DeleteReserve(c *gin.Context) {
+	var r model.Reservation
+	if err := c.ShouldBindJSON(&r); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.DeleteReserveFail,
+			"msg":    "预约失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err:=model.DeleteReserve(&r)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.DeleteReserveFail,
+			"msg":    err.Error(),
+			"data":   "删除预约记录失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.DeleteReserveSuccess,
+		"msg":    "删除预约记录成功",
+	})
+
+	return
+}
