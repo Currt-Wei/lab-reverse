@@ -47,6 +47,17 @@ func GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
+// GetUserByAccount 根据Account查找用户
+func GetUserByAccount(account string) (*User, error) {
+	var user User
+	err := DB.Where("account = ?", account).First(&user).Error
+	if err != nil {
+		log.Logger().Errorf("[user]根据email查找用户失败，%s", err)
+		return nil, err
+	}
+	return &user, nil
+}
+
 func GetUserById(id int) (*User, error) {
 	var user User
 	err := DB.Preload("Role").Where("id = ?", id).First(&user).Error

@@ -29,3 +29,9 @@ func FindUserByEmail(email string) (*model.User, error) {
 	user1, err := model.GetUserByEmail(email)
 	return user1, err
 }
+
+func FindUserByAccount(account string) (*model.User, error) {
+
+	user1, err := model.GetUserByAccount(account)
+	return user1, err
+}

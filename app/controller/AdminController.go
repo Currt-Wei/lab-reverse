@@ -190,3 +190,100 @@ func DeleteLab(ctx *gin.Context) {
 		"msg": "删除成功",
 	})
 }
+
+func AddAnnouncement(ctx *gin.Context){
+	var a model.Announcement
+	if err := ctx.ShouldBindJSON(&a); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.AddAnnouncementFail,
+			"msg":    "添加公告失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err:=model.AddAnnouncement(&a)
+
+	if err!=nil {
+		log.Println("[AddAnnouncement]添加公告失败")
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": constant.AddAnnouncementFail,
+			"err": err,
+			"msg": "添加公告失败",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": constant.AddAnnouncementSuccess,
+		"msg": "添加公告成功",
+	})
+}
+
+func DeleteAnnouncement(ctx *gin.Context){
+	var a model.Announcement
+	if err := ctx.ShouldBindJSON(&a); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.DeleteAnnouncementFail,
+			"msg":    "删除公告失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err:=model.DeleteAnnouncement(&a)
+
+	if err!=nil {
+		log.Println("[DeleteAnnouncement]添加公告失败")
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": constant.DeleteAnnouncementFail,
+			"err": err,
+			"msg": "删除公告失败",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": constant.DeleteAnnouncementSuccess,
+		"msg": "删除公告成功",
+	})
+}
+
+func FindAllAnnouncement(ctx *gin.Context){
+	// 获取查询数据
+	data := ctx.Request.URL.Query()
+
+	// 获取分页数据
+	limit, _ := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+
+	//users, err:=service.FindAllUser(data,limit,page)
+	offset := (page - 1) * limit
+
+	var announcements []model.Announcement
+
+	db:=model.DB
+	db = db.Limit(limit).Offset(offset)
+	// 添加筛选条件
+	if data.Get("title") != "" {
+		db = db.Where("title LIKE ?", data.Get("title"))
+	}
+
+	err := db.Find(&announcements).Error
+
+	if err!=nil {
+		log.Println("[DeleteAnnouncement]添加公告失败")
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": constant.FindAllAnnouncementFail,
+			"err": err,
+			"msg": "查找公告失败",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": constant.FindAllAnnouncementSuccess,
+		"msg": "查找公告成功",
+		"announcements":announcements,
+	})
+}

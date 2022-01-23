@@ -2,6 +2,15 @@ DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `seats`;
 DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `laboratory`;
+DROP TABLE IF EXISTS `announcement`;
+
+CREATE TABLE announcement (
+    id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键，唯一标识一个公告',
+    title varchar(50) UNIQUE NOT NULL COMMENT '标题',
+    content text DEFAULT NULL COMMENT '公告内容',
+    PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+insert into announcement (id, title, content) value (1,'测试公告','hello world!!!!');
 
 DROP TABLE IF EXISTS laboratory;
 CREATE TABLE laboratory (
@@ -95,4 +104,4 @@ CREATE TABLE `user` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_user_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-insert into user (email, password, role_name) value ('zhansan@qq.com','123456','student');
+insert into user (account,email, password, role_name) value ('20182022001','zhansan@qq.com','123456','student');

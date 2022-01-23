@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"lab-reverse/app/middleware"
@@ -126,7 +127,7 @@ func generateToken(c *gin.Context, user model.User) string {
 	return token
 }
 
-func GetInfoByEmail(c *gin.Context) {
+func GetInfoByAccount(c *gin.Context) {
 	var u model.User
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -138,7 +139,9 @@ func GetInfoByEmail(c *gin.Context) {
 	}
 
 	//TODO 查找数据库
-	user, err := service.FindUserByEmail(u.Email)
+	user, err := service.FindUserByAccount(u.Account)
+
+	fmt.Println("GetInfoByEmail 请求成功")
 
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -159,23 +162,17 @@ func GetInfoByEmail(c *gin.Context) {
 }
 
 func GetReserveInfo(c *gin.Context){
-	var u model.User
-	if err := c.ShouldBindJSON(&u); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": constant.GetReserveInfoFail,
-			"msg":    "查询失败",
-			"data":   err.Error(),
-		})
-		return
-	}
 
-	//TODO 查找数据库
-	user, err := service.FindUserByEmail(u.Email)
-	userId := user.Id
+
 
 	// 获取分页数据
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+
+	account := c.Query("account")
+	//TODO 查找数据库
+	user, err := service.FindUserByAccount(account)
+	userId := user.Id
 
 	//users, err:=service.FindAllUser(data,limit,page)
 	offset := (page - 1) * limit
