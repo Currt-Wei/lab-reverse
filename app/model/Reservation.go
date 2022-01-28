@@ -2,9 +2,8 @@ package model
 
 type Reservation struct {
 	Id     int    `gorm:"column:id" json:"id"`
-	UserId     int    `gorm:"column:user_id" json:"user_id"`
-	LabId     int    `gorm:"column:lab_id" json:"lab_id"`
-	SeatId     int    `gorm:"column:seat_id" json:"seat_id"`
+	Account     string    `gorm:"column:account" json:"account"`
+	LabName     string    `gorm:"column:lab_name" json:"lab_name"`
 	SeatName    string    `gorm:"column:seat_name" json:"seat_name"`
 	ReserveDate	 string    `gorm:"column:reserve_date" json:"reserve_date"`
 	TimeInterval     string    `gorm:"column:time_interval" json:"time_interval"`
@@ -20,12 +19,12 @@ func ReserveSeat(reservation *Reservation) error{
 	return DB.Create(&reservation).Error
 }
 
-func SearchSeat(date, time string, labId int) ([]Reservation,error) {
+func SearchSeat(date, time,labName string) ([]Reservation,error) {
 	var reservations []Reservation
-	err := DB.Where("lab_id = ? and reserve_date = ? and time_interval = ?", labId, date, time).Find(&reservations).Error
+	err := DB.Where("lab_name = ? and reserve_date = ? and time_interval = ?", labName, date, time).Find(&reservations).Error
 	return reservations,err
 }
 
 func DeleteReserve(reservation *Reservation) error{
-	return DB.Where("seat_id=? and lab_id=? and reserve_date=? and time_interval=?",reservation.SeatId,reservation.LabId,reservation.ReserveDate,reservation.TimeInterval).Delete(&reservation).Error
+	return DB.Where("account=? and lab_name=? and reserve_date=? and time_interval=?",reservation.Account,reservation.LabName,reservation.ReserveDate,reservation.TimeInterval).Delete(&reservation).Error
 }

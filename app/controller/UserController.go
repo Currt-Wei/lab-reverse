@@ -170,9 +170,6 @@ func GetReserveInfo(c *gin.Context){
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 
 	account := c.Query("account")
-	//TODO 查找数据库
-	user, err := service.FindUserByAccount(account)
-	userId := user.Id
 
 	//users, err:=service.FindAllUser(data,limit,page)
 	offset := (page - 1) * limit
@@ -181,7 +178,7 @@ func GetReserveInfo(c *gin.Context){
 	db = db.Limit(limit).Offset(offset)
 
 	var reserveInfo []model.Reservation
-	err = db.Where("user_id = ?", userId).Find(&reserveInfo).Error
+	err := db.Where("account = ?", account).Find(&reserveInfo).Error
 
 	var todo []model.Reservation
 	var done []model.Reservation
