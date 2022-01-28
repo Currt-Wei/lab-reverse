@@ -19,9 +19,10 @@ func ReserveSeat(c *gin.Context) {
 		return
 	}
 
+	u,err := model.GetUserByAccount(r.Account)
+	r.UserName=u.Name
 
-
-	err:=model.ReserveSeat(&r)
+	err=model.ReserveSeat(&r)
 
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
