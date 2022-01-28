@@ -27,5 +27,15 @@ func SearchSeat(date, time,labName string) ([]Reservation,error) {
 }
 
 func DeleteReserve(reservation *Reservation) error{
-	return DB.Where("account=? and lab_name=? and reserve_date=? and time_interval=?",reservation.Account,reservation.LabName,reservation.ReserveDate,reservation.TimeInterval).Delete(&reservation).Error
+	return DB.Where("account=? and lab_name=? and seat_name = ? and reserve_date=? and time_interval=?",reservation.Account,reservation.LabName,reservation.SeatName,reservation.ReserveDate,reservation.TimeInterval).Delete(&reservation).Error
+}
+
+func RepeatReserve(lab_name, reserve_date, time_interval string) (bool,error){
+	var reservation *Reservation
+	err:=DB.Where("lab_name = ? and reserve_date = ? and time_interval = ?", lab_name, reserve_date, time_interval).Find(&reservation).Error
+	if reservation.Account!=""{
+		return true,err
+	}
+	return false, err
+
 }

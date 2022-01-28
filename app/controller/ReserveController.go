@@ -19,6 +19,24 @@ func ReserveSeat(c *gin.Context) {
 		return
 	}
 
+	b,err:=model.RepeatReserve(r.LabName,r.ReserveDate,r.TimeInterval)
+	if b==true{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.AddSeatFail,
+			"msg":    "预约失败,不可重复预约同一课室",
+		})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.ReserveSeatFail,
+			"msg":    err.Error(),
+			"data":   "添加失败",
+		})
+		return
+	}
+
+
 	u,err := model.GetUserByAccount(r.Account)
 	r.UserName=u.Name
 
