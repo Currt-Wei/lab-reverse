@@ -2,6 +2,7 @@ package model
 
 type Reservation struct {
 	Id     int    `gorm:"column:id" json:"id"`
+	UserName	string    `gorm:"column:user_name" json:"user_name"`
 	Account     string    `gorm:"column:account" json:"account"`
 	LabName     string    `gorm:"column:lab_name" json:"lab_name"`
 	SeatName    string    `gorm:"column:seat_name" json:"seat_name"`

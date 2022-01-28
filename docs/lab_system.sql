@@ -74,6 +74,7 @@ insert into seats (id, seat_id, lab_name, seat_name) values (0,40,'b3-234','E8')
 
 CREATE TABLE reservation (
      id int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室预约表的主键',
+     user_name varchar(50) DEFAULT NULL,
      account bigint unsigned DEFAULT NULL COMMENT '预约人账号',
      lab_name varchar(100) DEFAULT NULL COMMENT '实验室名字',
      seat_name varchar(100) NOT NULL,
@@ -83,10 +84,10 @@ CREATE TABLE reservation (
      description varchar(500) DEFAULT NULL COMMENT '预约描述',
      PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-insert into reservation (account, lab_name, seat_name, reserve_date, time_interval) values ('20182022001','B3-234','A1','2022-01-23','8:50:00-10:25:00');
-insert into reservation (account, lab_name, seat_name, reserve_date, time_interval) values ('20182022001','B3-234','A2','2022-01-23','8:50:00-10:25:00');
-insert into reservation (account, lab_name, seat_name, reserve_date, time_interval) values ('20182022001','B3-234','A3','2022-01-23','8:50:00-10:25:00');
-insert into reservation (account, lab_name, seat_name, reserve_date, time_interval) values ('20182022001','B3-234','A4','2022-01-23','8:50:00-10:25:00');
+insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A1','2022-01-23','8:50:00-10:25:00');
+insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A2','2022-01-23','8:50:00-10:25:00');
+insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A3','2022-01-23','8:50:00-10:25:00');
+insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A4','2022-01-23','8:50:00-10:25:00');
 
 CREATE TABLE `user` (
     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
