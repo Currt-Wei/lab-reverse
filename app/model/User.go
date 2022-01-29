@@ -1,6 +1,8 @@
 package model
 
-import "lab-reverse/app/middleware/log"
+import (
+	"lab-reverse/app/middleware/log"
+)
 
 
 type User struct {
@@ -78,4 +80,12 @@ func GetReserveInfo(UserId uint) ([]Reservation,error){
 	var ReservationInfo []Reservation
 	err := DB.Where("user_id = ?", UserId).Find(&ReservationInfo).Error
 	return ReservationInfo,err
+}
+
+func TurnToAdmin(user User) error{
+	return DB.Model(&user).Where("account",user.Account).Update("RoleName","admin").Error
+}
+
+func TurnToUser(user User) error{
+	return DB.Model(&user).Where("account",user.Account).Update("RoleName","user").Error
 }

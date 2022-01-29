@@ -287,3 +287,67 @@ func FindAllAnnouncement(ctx *gin.Context){
 		"announcements":announcements,
 	})
 }
+
+func TurnToAdmin(c *gin.Context){
+	var u model.User
+	if err := c.ShouldBindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.TurnToAdminFail,
+			"msg":    "更新失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err := model.TurnToAdmin(u)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.TurnToAdminFail,
+			"msg":    err.Error(),
+			"data":   "更新失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.TurnToAdminSuccess,
+		"msg":    "更新成功",
+	})
+
+	return
+}
+
+func TurnToUser(c *gin.Context){
+	var u model.User
+	if err := c.ShouldBindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.TurnToUserFail,
+			"msg":    "更新失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err := model.TurnToUser(u)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.TurnToUserFail,
+			"msg":    err.Error(),
+			"data":   "更新失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.TurnToAUserSuccess,
+		"msg":    "更新成功",
+	})
+
+	return
+}
+
+func GetHumiture(ctx *gin.Context){
+
+}

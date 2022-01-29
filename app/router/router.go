@@ -22,6 +22,9 @@ func InitRouter() {
 	// 权限验证
 	//r.Use(middleware.Authorize())
 
+
+	r.POST("/turnToUser", controller.TurnToUser)
+	r.POST("/turnToAdmin", controller.TurnToAdmin)
 	r.POST("/addAnnouncement", controller.AddAnnouncement)
 	r.POST("/deleteAnnouncement", controller.DeleteAnnouncement)
 	r.GET("/findAllAnnouncement", controller.FindAllAnnouncement)
