@@ -71,7 +71,7 @@ insert into seats (id, seat_id, lab_name, seat_name) values (0,39,'b3-234','E7')
 insert into seats (id, seat_id, lab_name, seat_name) values (0,40,'b3-234','E8');
 
 
-
+DROP TABLE IF EXISTS `reservation`;
 CREATE TABLE reservation (
      id int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室预约表的主键',
      user_name varchar(50) DEFAULT NULL,
