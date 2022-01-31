@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS `announcement`;
 
 CREATE TABLE announcement (
     id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键，唯一标识一个公告',
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     title varchar(50) UNIQUE NOT NULL COMMENT '标题',
     content text DEFAULT NULL COMMENT '公告内容',
     PRIMARY KEY (id)
@@ -107,4 +108,4 @@ CREATE TABLE `user` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_user_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-insert into user (account,email, password, role_name) value ('20182022001','zhansan@qq.com','123456','student');
+insert into user (account,name,email, password, role_name) value ('20182022001','张三','zhansan@qq.com','123456','student');
