@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"golang.org/x/crypto/bcrypt"
+	"lab-reverse/app/common"
 	"lab-reverse/app/middleware"
 	"lab-reverse/app/model"
 	"lab-reverse/app/service"
 	"lab-reverse/constant"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -44,58 +48,221 @@ func TestToken(c *gin.Context) {
 	return
 }
 
-// Login 登陆
-func Login(c *gin.Context) {
-	var u model.User
-	if err := c.ShouldBindJSON(&u); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": constant.LoginFail,
-			"msg":    "登录失败",
-			"data":   err.Error(),
+// Register 用户注册
+// @Summary 学生/教师注册
+// @Tags Register
+// @Accept json
+// @Produce json
+// @Param	user  body	model.User  true  "Add user"
+// @Success 200 {string} string
+// @Router /register [post]
+func Register(ctx *gin.Context) {
+	var db = model.DB
+	var tmp = struct {
+		model.User
+		Code string
+	}{}
+	// 绑定数据
+	if err := ctx.Bind(&tmp); err != nil {
+		log.Println("[register]注册绑定数据出错")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"data": nil,
+			"msg": "注册绑定数据出错",
+		})
+		return
+	}
+	stu := tmp.User
+
+	// 验证邮箱验证码是否正确
+	emailCode, found := constant.EmailCache.Get("user_" + stu.Email)
+	if !found || tmp.Code != emailCode {
+		log.Println("[register]验证码错误")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": constant.CodeError,
+			"data": nil,
+			"msg": "验证码错误",
 		})
 		return
 	}
 
-	//TODO 查找数据库
-	user, err := service.FindUserByEmail(u.Email)
+	// 验证字段正确性
+	validate := validator.New()
+	err := validate.Struct(&stu)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": constant.LoginFail,
-			"msg":    err.Error(),
-			"data":   "登录失败",
+		log.Println("[register]字段验证错误")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"data": nil,
+			"msg": err.Error(),
 		})
 		return
 	}
 
-	// 密码错误
-	if u.Password != user.Password {
-		c.JSON(http.StatusOK, gin.H{
-			"status": constant.LoginFail,
-			"msg":    "登录失败",
-			"data":   err.Error(),
+	// 判断学号是否重复
+	var temp model.User
+	db.Where("account", stu.Account).Find(&temp)
+	if temp.Id != 0 {
+		log.Println("[register]该用户已注册")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"data": nil,
+			"msg": "该用户已注册",
 		})
 		return
 	}
 
-	token := generateToken(c, *user)
-	var role string
-	// 用户角色
-	//if len(user.Role) == 0 {
-	//	role = "user"
-	//} else {
-	//	role = user.Role[0].RoleName
-	//}
-	c.JSON(http.StatusOK, gin.H{
-		"status": constant.LoginSuccess,
-		"msg":    "登陆成功",
+	// 密码加密
+	password, err := bcrypt.GenerateFromPassword([]byte(stu.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("[register]密码加密失败")
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"data": nil,
+			"msg": "系统出错",
+		})
+		return
+	}
+	stu.Password = string(password)
+	err = db.Create(&stu).Error
+	if err != nil {
+		log.Println("[register]创建用户失败, err:", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"data": nil,
+			"msg": "创建用户失败",
+		})
+		return
+	}
+	// 删掉邮箱验证码
+	constant.EmailCache.Delete("stu_" + stu.Email)
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": nil,
+		"msg": "注册成功",
+	})
+}
+
+func Login(ctx *gin.Context) {
+	var db = model.DB
+	var loginUser model.User
+	// 获取账号密码
+	if err := ctx.Bind(&loginUser); err != nil {
+		log.Println("[login]绑定数据出错")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"data": nil,
+			"msg": "绑定数据出错",
+		})
+		return
+	}
+	// 查出当前用户
+	var temp model.User
+	db.Where("account", loginUser.Account).Find(&temp)
+	if temp.Id == 0 {
+		log.Println("[login]该用户不存在")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"data": nil,
+			"msg": "账号或密码错误",
+		})
+		return
+	}
+	// 对比密码是否错误
+	err := bcrypt.CompareHashAndPassword([]byte(temp.Password), []byte(loginUser.Password))
+	if err != nil {
+		log.Println("[login]密码错误")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"data": nil,
+			"msg": "账号或密码错误",
+		})
+		return
+	}
+	// 查看用户是否是启用状态
+	if temp.Enable == 0 {
+		log.Println("[login]该用户是禁用状态")
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": constant.DisableUserError,
+			"data": nil,
+			"msg": "该用户是禁用状态，请联系管理员",
+		})
+		return
+	}
+	// 登录成功，返回token
+	token, err := common.ReleaseToken(temp)
+	if err != nil {
+		log.Println("[login]生成token出错")
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"data": nil,
+			"msg": "生成token出错",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
 		"data": gin.H{
 			"token": token,
-			"role":  role,
+			"role": temp.RoleName,
 		},
+		"msg": "登录成功",
 	})
-
-	return
 }
+
+// Login 登陆
+//func Login(c *gin.Context) {
+//	var u model.User
+//	if err := c.ShouldBindJSON(&u); err != nil {
+//		c.JSON(http.StatusBadRequest, gin.H{
+//			"status": constant.LoginFail,
+//			"msg":    "登录失败",
+//			"data":   err.Error(),
+//		})
+//		return
+//	}
+//
+//	//TODO 查找数据库
+//	user, err := service.FindUserByEmail(u.Email)
+//	if err != nil {
+//		c.JSON(http.StatusOK, gin.H{
+//			"status": constant.LoginFail,
+//			"msg":    err.Error(),
+//			"data":   "登录失败",
+//		})
+//		return
+//	}
+//
+//	// 密码错误
+//	if u.Password != user.Password {
+//		c.JSON(http.StatusOK, gin.H{
+//			"status": constant.LoginFail,
+//			"msg":    "登录失败",
+//			"data":   err.Error(),
+//		})
+//		return
+//	}
+//
+//	token := generateToken(c, *user)
+//	var role string
+//	// 用户角色
+//	//if len(user.Role) == 0 {
+//	//	role = "user"
+//	//} else {
+//	//	role = user.Role[0].RoleName
+//	//}
+//	c.JSON(http.StatusOK, gin.H{
+//		"status": constant.LoginSuccess,
+//		"msg":    "登陆成功",
+//		"data": gin.H{
+//			"token": token,
+//			"role":  role,
+//		},
+//	})
+//
+//	return
+//}
 
 // token生成器
 func generateToken(c *gin.Context, user model.User) string {

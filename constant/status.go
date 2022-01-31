@@ -42,3 +42,8 @@ const FindAllAnnouncementFail string = "BS4017"		// 查找公告信息失败
 const TurnToAdminFail string = "BS4018"		// 转为管理员失败
 const TurnToUserFail string = "BS4019"		// 转为用户失败
 
+// CodeError 验证码错误
+const CodeError string = "LPS4001"
+
+// DisableUserError 禁用的用户
+const DisableUserError = "LPS4102"

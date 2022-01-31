@@ -14,8 +14,6 @@ func InitRouter() {
 	// 默认跨域
 	r.Use(middleware.Cors())
 
-	//r.POST("/register", controller.Register)
-	r.POST("/login", controller.Login)
 
 	// 使用自定义的jwt认证
 	//r.Use(middleware.JWTAuth())
@@ -23,6 +21,8 @@ func InitRouter() {
 	//r.Use(middleware.Authorize())
 
 
+	r.POST("/register", controller.Register)
+	r.POST("/login", controller.Login)
 	r.POST("/turnToUser", controller.TurnToUser)
 	r.POST("/turnToAdmin", controller.TurnToAdmin)
 	r.POST("/addAnnouncement", controller.AddAnnouncement)
