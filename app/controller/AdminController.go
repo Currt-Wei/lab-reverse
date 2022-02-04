@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func FindAllUser(ctx *gin.Context){
@@ -350,4 +352,70 @@ func TurnToUser(c *gin.Context){
 
 func GetHumiture(ctx *gin.Context){
 
+}
+
+func GetAllReserveInfo(c *gin.Context){
+	// 获取查询数据
+	data := c.Request.URL.Query()
+
+
+	// 获取分页数据
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+
+	//users, err:=service.FindAllUser(data,limit,page)
+	offset := (page - 1) * limit
+
+	db:=model.DB
+	db = db.Limit(limit).Offset(offset)
+
+	var reserveInfo []model.Reservation
+
+	// 添加筛选条件
+	if data.Get("lab_name") != "" {
+		db = db.Where("lab_name LIKE ?", data.Get("lab_name"))
+	}
+
+	if data.Get("reserve_date") != "" {
+		db = db.Where("reserve_date LIKE ?", data.Get("reserve_date"))
+	}
+
+	if data.Get("time_interval") != "" {
+		db = db.Where("time_interval LIKE ?", data.Get("time_interval"))
+	}
+
+	err:=db.Find(&reserveInfo).Error
+
+	var todo []model.Reservation
+	var done []model.Reservation
+	for _,info :=range reserveInfo {
+		interval :=strings.Split(info.TimeInterval,"-")
+		t,_ := time.ParseInLocation("2006-01-02 15:04:05", info.ReserveDate+" "+interval[0],time.Local)
+		if t.After(time.Now()){
+			todo = append(todo,info)
+		} else {
+			done = append(done, info)
+		}
+
+
+	}
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.GetAllReserveInfoFail,
+			"msg":    err.Error(),
+			"data":   "查询失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": constant.GetAllReserveInfoSuccess,
+		"msg":    "查询成功",
+		//"data": 	reserveInfo,
+		"todo": 	todo,
+		"done":		done,
+	})
+
+	return
 }

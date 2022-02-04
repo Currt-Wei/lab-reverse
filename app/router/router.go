@@ -32,6 +32,7 @@ func InitRouter() {
 	r.POST("/searchSeat", controller.SearchSeat)
 	r.POST("/getInfoByAccount", controller.GetInfoByAccount)
 	r.GET("/getReserveInfo", controller.GetReserveInfo)
+	r.GET("/getAllReserveInfo", controller.GetAllReserveInfo)
 	r.POST("/deleteReserve", controller.DeleteReserve)
 	r.GET("/findAllUser", controller.FindAllUser)
 	r.POST("/addSeat", controller.AddSeat)

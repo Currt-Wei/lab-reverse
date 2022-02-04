@@ -20,6 +20,7 @@ const DeleteAnnouncementSuccess string = "BS2016"		// 添加公告信息成功
 const FindAllAnnouncementSuccess string = "BS2017"		// 查找公告信息成功
 const TurnToAdminSuccess string = "BS2018"		// 转为管理员成功
 const TurnToAUserSuccess string = "BS2019"		// 转为管理员成功
+const GetAllReserveInfoSuccess string = "BS2020"		// 查询所有预约信息成功
 
 // fail
 const LoginFail string = "BS4001"             // 登陆失败
@@ -41,6 +42,7 @@ const DeleteAnnouncementFail string = "BS4016"		// 添加公告信息失败
 const FindAllAnnouncementFail string = "BS4017"		// 查找公告信息失败
 const TurnToAdminFail string = "BS4018"		// 转为管理员失败
 const TurnToUserFail string = "BS4019"		// 转为用户失败
+const GetAllReserveInfoFail string = "BS4020"		// 查询所有预约信息失败
 
 // CodeError 验证码错误
 const CodeError string = "LPS4001"
