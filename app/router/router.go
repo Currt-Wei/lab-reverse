@@ -21,6 +21,10 @@ func InitRouter() {
 	//r.Use(middleware.Authorize())
 
 
+	r.GET("/getApply", controller.GetApply)
+	r.POST("/refuseApply", controller.RefuseApply)
+	r.POST("/allowApply", controller.AllowApply)
+	r.POST("/applyForLab", controller.ApplyForLab)
 	r.POST("/register", controller.Register)
 	r.POST("/login", controller.Login)
 	r.POST("/turnToUser", controller.TurnToUser)
@@ -36,9 +40,12 @@ func InitRouter() {
 	r.POST("/deleteReserve", controller.DeleteReserve)
 	r.GET("/findAllUser", controller.FindAllUser)
 	r.POST("/addSeat", controller.AddSeat)
+	r.POST("/setBreakdown", controller.SetBreakdown)
+	r.POST("/setNormal", controller.SetNormal)
 	r.POST("/addLab",controller.AddLab)
 	r.POST("/updateLabInfo",controller.UpdateLabInfo)
 	r.GET("/findAllLab",controller.FindAllLab)
+	r.POST("/findAllSeat",controller.FindAllSeat)
 	r.POST("/deleteLab",controller.DeleteLab)
 
 	err := r.Run()

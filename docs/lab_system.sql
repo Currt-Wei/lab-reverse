@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS `seats`;
 DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `laboratory`;
 DROP TABLE IF EXISTS `announcement`;
+DROP TABLE IF EXISTS `apply`;
 
 CREATE TABLE announcement (
     id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键，唯一标识一个公告',
@@ -28,6 +29,7 @@ CREATE TABLE seats (
    `seat_id` int unsigned NOT NULL,
    `lab_name` varchar(100) NOT NULL DEFAULT 0,
    `seat_name` varchar(100) NOT NULL,
+   `status` int(10) NOT NULL DEFAULT 0 COMMENT '状态 0-正常 1-故障',
    PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 insert into seats (id, seat_id, lab_name, seat_name) values (0,1,'b3-234','A1');
@@ -70,7 +72,10 @@ insert into seats (id, seat_id, lab_name, seat_name) values (0,37,'b3-234','E5')
 insert into seats (id, seat_id, lab_name, seat_name) values (0,38,'b3-234','E6');
 insert into seats (id, seat_id, lab_name, seat_name) values (0,39,'b3-234','E7');
 insert into seats (id, seat_id, lab_name, seat_name) values (0,40,'b3-234','E8');
-
+insert into seats (id, seat_id, lab_name, seat_name) values (0,1,'b3-351','A1');
+insert into seats (id, seat_id, lab_name, seat_name) values (0,2,'b3-351','A2');
+insert into seats (id, seat_id, lab_name, seat_name) values (0,3,'b3-351','A3');
+insert into seats (id, seat_id, lab_name, seat_name) values (0,4,'b3-351','A4');
 
 DROP TABLE IF EXISTS `reservation`;
 CREATE TABLE reservation (
@@ -109,3 +114,13 @@ CREATE TABLE `user` (
     UNIQUE KEY `idx_user_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 insert into user (account,name,email, password, role_name) value ('20182022001','张三','zhansan@qq.com','123456','student');
+
+CREATE TABLE apply (
+      `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室申请表的主键',
+      `user_name` varchar(50) DEFAULT NULL,
+      `account` bigint unsigned DEFAULT NULL COMMENT '预约人账号',
+      `lab_name` varchar(100) DEFAULT NULL COMMENT '实验室名字',
+      `status` int(10) NOT NULL DEFAULT 0 COMMENT '状态 0-申请中 1-申请成功 2-申请失败',
+      `description` varchar(500) DEFAULT NULL COMMENT '申请描述',
+      PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;

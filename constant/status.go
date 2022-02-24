@@ -21,6 +21,13 @@ const FindAllAnnouncementSuccess string = "BS2017"		// 查找公告信息成功
 const TurnToAdminSuccess string = "BS2018"		// 转为管理员成功
 const TurnToAUserSuccess string = "BS2019"		// 转为管理员成功
 const GetAllReserveInfoSuccess string = "BS2020"		// 查询所有预约信息成功
+const FindAllSeatSuccess string = "BS2021"		// 查询所有座位信息成功
+const SetBreakdownSuccess string = "BS2022"		// 设置座位故障成功
+const SetNormalSuccess string = "BS2023"		// 恢复座位正常成功
+const ApplyForLabSuccess string = "BS2024"		// 申请实验室成功
+const AllowApplySuccess string = "BS2025"		// 通过申请成功
+const RefuseApplySuccess string = "BS2026"		// 拒绝申请成功
+const GetApplySuccess string = "BS2027"		// 查询申请成功
 
 // fail
 const LoginFail string = "BS4001"             // 登陆失败
@@ -43,6 +50,14 @@ const FindAllAnnouncementFail string = "BS4017"		// 查找公告信息失败
 const TurnToAdminFail string = "BS4018"		// 转为管理员失败
 const TurnToUserFail string = "BS4019"		// 转为用户失败
 const GetAllReserveInfoFail string = "BS4020"		// 查询所有预约信息失败
+const FindAllSeatFail string = "BS4021"		// 查询所有座位信息失败
+const SetBreakdownFail string = "BS4022"		// 设置座位故障失败
+const SetNormalFail string = "BS4023"		// 恢复座位正常失败
+const ApplyForLabFail string = "BS4024"		// 申请实验室失败
+const AllowApplyFail string = "BS4025"		// 通过申请失败
+const RefuseApplyFail string = "BS4026"		// 拒绝申请成功
+const GetApplyFail string = "BS4027"		// 查询申请成功
+
 
 // CodeError 验证码错误
 const CodeError string = "LPS4001"

@@ -5,6 +5,7 @@ type Seat struct {
 	LabName     string    `gorm:"column:lab_name" json:"lab_name"`
 	SeatId    int    `gorm:"column:seat_id" json:"seat_id"`
 	SeatName    string    `gorm:"column:seat_name" json:"seat_name"`
+	Status		int `gorm:"column:status" json:"status"`
 }
 
 func (S Seat) TableName() string {
@@ -13,6 +14,16 @@ func (S Seat) TableName() string {
 
 func AddSeat(Seat Seat) error{
 	return DB.Create(&Seat).Error
+}
+
+func SetBreakdown(Seat Seat) error{
+	return DB.Model(&Seat).Where("lab_name",Seat.LabName).Where("seat_name",Seat.SeatName).Update("status","1").Error
+
+}
+
+func SetNormal(Seat Seat) error{
+	return DB.Model(&Seat).Where("lab_name",Seat.LabName).Where("seat_name",Seat.SeatName).Update("status","0").Error
+
 }
 
 func FindSeatBySeatId(seatId int) (Seat,error){
@@ -26,3 +37,4 @@ func FindSeatBySeatNameAndLabName(seatName, labName string) (Seat,error){
 	err:=DB.Where("seat_name = ? and lab_name = ?",seatName, labName).Find(&seat).Error
 	return *seat,err
 }
+
