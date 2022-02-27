@@ -21,6 +21,7 @@ func InitRouter() {
 	//r.Use(middleware.Authorize())
 
 
+	r.GET("/getPersonalApply", controller.GetPersonalApply)
 	r.GET("/getApply", controller.GetApply)
 	r.POST("/refuseApply", controller.RefuseApply)
 	r.POST("/allowApply", controller.AllowApply)

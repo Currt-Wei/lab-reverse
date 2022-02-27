@@ -28,6 +28,7 @@ const ApplyForLabSuccess string = "BS2024"		// 申请实验室成功
 const AllowApplySuccess string = "BS2025"		// 通过申请成功
 const RefuseApplySuccess string = "BS2026"		// 拒绝申请成功
 const GetApplySuccess string = "BS2027"		// 查询申请成功
+const GetPersonalApplySuccess string = "BS2028"		// 查询个人申请成功
 
 // fail
 const LoginFail string = "BS4001"             // 登陆失败
@@ -57,6 +58,7 @@ const ApplyForLabFail string = "BS4024"		// 申请实验室失败
 const AllowApplyFail string = "BS4025"		// 通过申请失败
 const RefuseApplyFail string = "BS4026"		// 拒绝申请成功
 const GetApplyFail string = "BS4027"		// 查询申请成功
+const GetPersonalApplyFail string = "BS4028"		// 查询个人申请成功
 
 
 // CodeError 验证码错误

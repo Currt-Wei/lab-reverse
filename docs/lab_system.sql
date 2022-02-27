@@ -117,10 +117,13 @@ insert into user (account,name,email, password, role_name) value ('20182022001',
 
 CREATE TABLE apply (
       `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室申请表的主键',
+      `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `user_name` varchar(50) DEFAULT NULL,
       `account` bigint unsigned DEFAULT NULL COMMENT '预约人账号',
       `lab_name` varchar(100) DEFAULT NULL COMMENT '实验室名字',
+      `reserve_date` varchar(100) DEFAULT NULL COMMENT '预约日期',
       `status` int(10) NOT NULL DEFAULT 0 COMMENT '状态 0-申请中 1-申请成功 2-申请失败',
       `description` varchar(500) DEFAULT NULL COMMENT '申请描述',
+      `dates` varchar(500) DEFAULT NULL COMMENT '申请区间',
       PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
