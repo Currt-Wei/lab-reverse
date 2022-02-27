@@ -27,3 +27,9 @@ func AllowApply(A Apply) error{
 func RefuseApply(A Apply) error{
 	return DB.Model(&A).Where("account",A.Account).Where("lab_name",A.LabName).Update("status","2").Error
 }
+
+func SearchApply(LabName string)([]Apply,error){
+	var applies []Apply
+	err := DB.Where("lab_name = ?", LabName).Find(&applies).Error
+	return applies,err
+}

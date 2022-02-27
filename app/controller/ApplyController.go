@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func ApplyForLab(ctx *gin.Context){
@@ -199,4 +200,46 @@ func GetPersonalApply(ctx *gin.Context){
 		"data": applies,
 		"msg": "查询成功",
 	})
+}
+
+func SearchApply(ctx *gin.Context){
+	var a model.Apply
+	if err := ctx.ShouldBindJSON(&a); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.SearchApplyFail,
+			"msg":    "查询失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	applies,err:=model.SearchApply(a.LabName)
+
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"status": constant.SearchApplyFail,
+			"msg":    "申请实验室失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	t:=time.Now().Format("2006-01-02")
+
+	var data []string
+
+	for _,apply := range applies{
+		if t<=apply.ReserveDate{
+			data=append(data,apply.ReserveDate)
+		}
+
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": constant.SearchApplySuccess,
+		"msg":    "申请实验室成功",
+		"data": data,
+	})
+
+	return
 }
