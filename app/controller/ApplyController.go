@@ -23,6 +23,8 @@ func ApplyForLab(ctx *gin.Context){
 
 	var err error
 
+	user,err :=model.GetUserByAccount(a.Account)
+
 	dates:=strings.Split(a.Dates,",")
 
 	for _,date := range dates{
@@ -30,7 +32,7 @@ func ApplyForLab(ctx *gin.Context){
 		apply.ReserveDate=date
 		apply.LabName=a.LabName
 		apply.Account=a.Account
-		apply.UserName=a.UserName
+		apply.UserName=user.Name
 		apply.Status=a.Status
 		apply.Description=a.Description
 		err=model.ApplyForLab(apply)
