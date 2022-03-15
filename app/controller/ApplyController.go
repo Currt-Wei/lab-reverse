@@ -123,17 +123,17 @@ func RefuseApply(ctx *gin.Context){
 func GetApply(ctx *gin.Context){
 	// 获取查询数据
 	data := ctx.Request.URL.Query()
-	// 获取分页数据
-	limit, _ := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
-	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
-
-	//users, err:=service.FindAllUser(data,limit,page)
-	offset := (page - 1) * limit
+	//// 获取分页数据
+	//limit, _ := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
+	//page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	//
+	////users, err:=service.FindAllUser(data,limit,page)
+	//offset := (page - 1) * limit
 
 	var applies []model.Apply
 
 	db:=model.DB
-	db = db.Limit(limit).Offset(offset)
+	//db = db.Limit(limit).Offset(offset)
 	// 添加筛选条件
 	if data.Get("account") != "" {
 		db = db.Where("account LIKE ?", data.Get("account"))
@@ -146,6 +146,20 @@ func GetApply(ctx *gin.Context){
 
 	err := db.Find(&applies).Error
 
+	var todo []model.Apply
+	var done []model.Apply
+	for _,info :=range applies {
+
+		t,_ := time.ParseInLocation("2006-01-02 15:04:05", info.ReserveDate+" "+"00:00:00",time.Local)
+		if t.After(time.Now()){
+			todo = append(todo,info)
+		} else {
+			done = append(done, info)
+		}
+
+
+	}
+
 	if err!=nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code": constant.GetApplyFail,
@@ -157,7 +171,8 @@ func GetApply(ctx *gin.Context){
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": constant.GetApplySuccess,
-		"data": applies,
+		"todo": todo,
+		"done": done,
 		"msg": "查询成功",
 	})
 }
