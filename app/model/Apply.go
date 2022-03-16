@@ -21,11 +21,11 @@ func ApplyForLab(A Apply) error{
 }
 
 func AllowApply(A Apply) error{
-	return DB.Model(&A).Where("account",A.Account).Where("lab_name",A.LabName).Update("status","1").Error
+	return DB.Model(&A).Where("account",A.Account).Where("lab_name",A.LabName).Where("reserve_date",A.ReserveDate).Update("status","1").Error
 }
 
 func RefuseApply(A Apply) error{
-	return DB.Model(&A).Where("account",A.Account).Where("lab_name",A.LabName).Update("status","2").Error
+	return DB.Model(&A).Where("account",A.Account).Where("lab_name",A.LabName).Where("reserve_date",A.ReserveDate).Update("status","2").Error
 }
 
 func SearchApply(LabName string)([]Apply,error){
