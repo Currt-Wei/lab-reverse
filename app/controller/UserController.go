@@ -205,7 +205,7 @@ func Login(ctx *gin.Context) {
 		"code": 200,
 		"data": gin.H{
 			"token": token,
-			"role": temp.RoleName,
+			"role": temp.RoleId,
 		},
 		"msg": "登录成功",
 	})

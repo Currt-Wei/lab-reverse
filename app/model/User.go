@@ -20,7 +20,7 @@ type User struct {
 	Identity string		`gorm:"type:varchar(10);default:student"`
 	Enable int			`gorm:"type:smallint;default:1" json:"enable"`
 
-	RoleName string		`gorm:"type:varchar(10);default:user"`
+	RoleId string		`gorm:"type:varchar(10);default:user"`
 }
 
 func (S User) TableName() string {
@@ -83,9 +83,9 @@ func GetReserveInfo(UserId uint) ([]Reservation,error){
 }
 
 func TurnToAdmin(user User) error{
-	return DB.Model(&user).Where("account",user.Account).Update("RoleName","admin").Error
+	return DB.Model(&user).Where("account",user.Account).Update("RoleId","1").Error
 }
 
 func TurnToUser(user User) error{
-	return DB.Model(&user).Where("account",user.Account).Update("RoleName","user").Error
+	return DB.Model(&user).Where("account",user.Account).Update("RoleId","3").Error
 }

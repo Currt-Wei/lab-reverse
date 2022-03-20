@@ -108,12 +108,12 @@ CREATE TABLE `user` (
     `degree` varchar(10) DEFAULT NULL,
     `grade` varchar(10) DEFAULT NULL,
     `identity` varchar(10) DEFAULT 'student',
-    `role_name` varchar(10) DEFAULT 'user',
+    `role_id` varchar(10) DEFAULT '2',
     `enable` smallint DEFAULT '1',
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_user_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-insert into user (account,name,email, password, role_name) value ('20182022001','张三','zhansan@qq.com','123456','student');
+insert into user (account,name,email, password, role_id) value ('20182022001','张三','zhansan@qq.com','123456','2');
 
 CREATE TABLE apply (
       `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室申请表的主键',
