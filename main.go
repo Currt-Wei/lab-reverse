@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	constant.InitEmailSetting()
 	util.InitMQTT()
 	constant.InitMysqlSetting()
 	util.InitMysql()

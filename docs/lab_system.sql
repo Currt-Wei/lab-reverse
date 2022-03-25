@@ -81,7 +81,7 @@ DROP TABLE IF EXISTS `reservation`;
 CREATE TABLE reservation (
      id int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室预约表的主键',
      user_name varchar(50) DEFAULT NULL,
-     account bigint unsigned DEFAULT NULL COMMENT '预约人账号',
+     account char(12) DEFAULT NULL COMMENT '预约人账号',
      lab_name varchar(100) DEFAULT NULL COMMENT '实验室名字',
      seat_name varchar(100) NOT NULL,
      reserve_date varchar(100) DEFAULT NULL COMMENT '预约日期',

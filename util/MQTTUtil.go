@@ -42,6 +42,8 @@ type SN struct {
 }
 
 func InitMQTT() {
+
+
 	//mqtt.DEBUG = log.New(os.Stdout, "", 0)
 	//mqtt.ERROR = log.New(os.Stdout, "", 0)
 	opts := mqtt.NewClientOptions().AddBroker("tcp://222.201.144.170:51883").SetClientID("wjh_client1")
