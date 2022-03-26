@@ -47,7 +47,7 @@ func GetOutsideWeather() (Live,error){
 	body, err := ioutil.ReadAll(resp.Body)
 	var r RESP
 	json.Unmarshal(body,&r)
-	if r.Count==0 {
+	if r.Infocode!="10000" {
 		return Live{},nil
 	}
 	var weather Live
