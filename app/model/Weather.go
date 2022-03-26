@@ -27,7 +27,8 @@ type RESP struct{
 	Infocode string `json:"infocode"`
 	Lives []Live `json:"lives"`
 }
-
+//9eea91669958b0c9eb61fd00ef014273
+//bb6cfa765968b4b11454a3265440c8a6
 const key = "bb6cfa765968b4b11454a3265440c8a6"
 const adcode="440100"
 const citycode="020"
@@ -46,6 +47,9 @@ func GetOutsideWeather() (Live,error){
 	body, err := ioutil.ReadAll(resp.Body)
 	var r RESP
 	json.Unmarshal(body,&r)
+	if r.Count==0 {
+		return Live{},nil
+	}
 	var weather Live
 	weather.Province=r.Lives[0].Province
 	weather.City=r.Lives[0].City
