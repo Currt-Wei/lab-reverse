@@ -50,7 +50,7 @@ func GetUserByEmail(email string) (*User, error) {
 }
 
 // GetUserByAccount 根据Account查找用户
-func GetUserByAccount(account string) (*User, error) {
+func GetUserByAccount(account string) (*User, error) {	
 	var user User
 	err := DB.Where("account = ?", account).First(&user).Error
 	if err != nil {

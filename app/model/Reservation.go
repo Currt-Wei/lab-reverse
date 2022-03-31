@@ -1,5 +1,10 @@
 package model
 
+import (
+	"strings"
+	"time"
+)
+
 type Reservation struct {
 	Id     int    `gorm:"column:id" json:"id"`
 	UserName	string    `gorm:"column:user_name" json:"user_name"`
@@ -38,4 +43,21 @@ func RepeatReserve(lab_name, reserve_date, time_interval string) (bool,error){
 	}
 	return false, err
 
+}
+
+func SearchReserve(account string)(bool,error){
+	var reservations []Reservation
+	err:=DB.Where("account = ?",account).Find(&reservations).Error
+	if err!=nil{
+		return false,err
+	}
+	for _,info:=range reservations{
+		interval :=strings.Split(info.TimeInterval,"-")
+		t1,_ := time.ParseInLocation("2006-01-02 15:04:05", info.ReserveDate+" "+interval[0],time.Local)
+		t2,_ := time.ParseInLocation("2006-01-02 15:04:05", info.ReserveDate+" "+interval[1],time.Local)
+		if t1.Before(time.Now())&&t2.After(time.Now()){
+			return true,nil
+		}
+	}
+	return false,nil
 }

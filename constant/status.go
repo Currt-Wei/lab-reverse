@@ -31,6 +31,7 @@ const GetApplySuccess string = "BS2027"		// 查询申请成功
 const GetPersonalApplySuccess string = "BS2028"		// 查询个人申请成功
 const SearchApplySuccess string = "BS2029"		// 查询可申请信息成功
 const GetOutsideWeatherSuccess string = "BS2030"		// 获取外部天气成功
+const EntranceGuardSuccess string = "BS2031"		// 获取门禁申请成功
 
 // fail
 const LoginFail string = "BS4001"             // 登陆失败
@@ -63,6 +64,7 @@ const GetApplyFail string = "BS4027"		// 查询申请失败
 const GetPersonalApplyFail string = "BS4028"		// 查询个人申请失败
 const SearchApplyFail string = "BS4029"		// 查询可申请信息失败
 const GetOutsideWeatherFail string = "BS4030"		// 获取外部天气失败
+const EntranceGuardFail string = "BS4031"		// 获取门禁申请失败
 
 
 // CodeError 验证码错误

@@ -22,6 +22,7 @@ func InitRouter() {
 
 
 	//r.POST("/PushTopic", controller.PushTopic)
+	r.POST("/entranceGuard", controller.EntranceGuard)
 	r.POST("/getOutsideWeather", controller.GetOutsideWeather)
 	r.POST("/email", controller.EmailTest)
 	r.POST("/searchApply", controller.SearchApply)
