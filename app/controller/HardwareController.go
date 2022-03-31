@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lab-reverse/app/model"
 	"lab-reverse/constant"
+	"lab-reverse/util"
 	"net/http"
 )
 
@@ -50,7 +51,11 @@ func EntranceGuard(ctx *gin.Context)  {
 	}
 
 	if b==false{
+
+		user,_:=model.GetUserByAccount(u.Account)
 		// email
+		util.SendEmail(user.Email, "申请门禁失败,未到预约时间")
+
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"status": constant.EntranceGuardFail,
 			"msg":    "申请门禁失败,未到预约时间",
