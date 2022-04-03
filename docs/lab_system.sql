@@ -113,7 +113,7 @@ CREATE TABLE `user` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_user_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-insert into user (account,name,email, password, role_id) value ('20182022001','张三','zhansan@qq.com','123456','2');
+insert into user (account,name,email, password, role_id) value ('201820220001','张三','zhansan@qq.com','123456','1');
 
 CREATE TABLE apply (
       `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室申请表的主键',
