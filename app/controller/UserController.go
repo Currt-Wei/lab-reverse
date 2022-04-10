@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -51,6 +52,44 @@ func TestToken(c *gin.Context) {
 	return
 }
 
+// SendVerificationCode 发送邮箱验证码
+func SendVerificationCode(ctx *gin.Context) {
+	// 获取邮箱
+	b, err := ctx.GetRawData()  // 从c.Request.Body读取请求数据
+	if err != nil {
+		log.Println("[register]获取请求体失败")
+		response.FailWithDetailed("500", nil, "获取请求体失败", ctx)
+		return
+	}
+	// 定义map或结构体
+	var m map[string]interface{}
+	// 反序列化
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		log.Println("[register]json反序列化失败")
+		response.FailWithDetailed("500", nil, "json反序列化失败", ctx)
+		return
+	}
+	email := m["email"].(string)
+	// 生成六位随机数
+	sessionEmailCode := common.GenEmailCode(6)
+	// 发送邮件
+	// go common.SendEmail(email, sessionEmailCode)
+	err = global.RabbitMQ.PublishQueue("email.code.wjh", email+":"+sessionEmailCode)
+	if err != nil {
+		log.Println("发错邮件出错了")
+		return
+	}
+	if err != nil {
+		log.Println("[register]邮箱发送验证码失败")
+		response.FailWithDetailed("500", nil, "邮箱发送验证码失败", ctx)
+		return
+	}
+	// 将数据保存到cache中
+	// constant.EmailCache.Set("user_" + email, sessionEmailCode, 5 * time.Minute)
+	global.RedisClient.Set(global.Context, "user_register_" + email, sessionEmailCode, 5 * time.Minute)
+	response.OkWithDetailed("200", nil, "邮箱发送验证码成功", ctx)
+}
 
 // Register 用户注册
 // @Summary 学生/教师注册

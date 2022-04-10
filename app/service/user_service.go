@@ -29,6 +29,13 @@ func (u *UserService) Register(user *model.User) (error, *model.User) {
 	// 替换密码
 	user.Password = string(password)
 	err = global.DB.Create(user).Error
+
+	// 添加该用户-角色到关联表
+	global.DB.Create(&model.UserRole{
+		UserId: user.Id,
+		RoleId: 666666,
+	})
+
 	return err, user
 }
 

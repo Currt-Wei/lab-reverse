@@ -16,13 +16,9 @@ type User struct {
 	Grade string		`gorm:"type:varchar(10)"`
 	Identity string		`gorm:"type:varchar(10);default:student"`
 	Enable int			`gorm:"type:smallint;default:1" json:"enable"`
-	RoleId	int			`json:"role_id"`
+	RoleId	int			`gorm:"default:666666" json:"role_id"`
 
 	RoleName string		`gorm:"type:varchar(10);default:user"`
-
-	TeamMembers	[]TeamMember	`gorm:"foreignKey:Account;references:Account"`
-	ContestSignups []ContestSignup	`gorm:"polymorphic:Target;polymorphicValue:single"`
-	Contests	[]Contest		`json:"contest" gorm:"many2many:contest_judge;foreignKey:Id;joinForeignKey:TeacherId;References:Id;JoinReferences:ContestId"`
 
 	// 用户登录时默认的角色
 	Role		Role	`json:"role"`

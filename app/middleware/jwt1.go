@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"lab-reverse/app/middleware/log"
+	"lab-reverse/app/common"
+	"lab-reverse/constant"
+	"lab-reverse/global"
 	"net/http"
+	"strings"
+	"time"
 )
 
 // 定义一个jwt对象
@@ -77,47 +81,61 @@ func (j *JWT) ParserToken(tokenString string) (*CustomClaims, error) {
 
 // 定义一个JWTAuth的中间件
 func JWTAuth() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// 通过http header中的token解析来认证
-		token := c.Request.Header.Get("token")
-		if token == "" {
-			c.JSON(http.StatusOK, gin.H{
-				"status": -1,
-				"msg":    "请求未携带token，无权限访问",
-				"data":   nil,
+	return func(ctx *gin.Context) {
+		// 获取authorization header
+		// Authorization:Bearer xxxxx
+		tokenString := ctx.GetHeader("Authorization")
+
+		// 验证token的格式
+		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"code": 401,
+				"data": nil,
+				"msg": "token格式出错",
 			})
-			c.Abort()
+			ctx.Abort()
 			return
 		}
 
-		// 打印日志
-		log.Logger().Print("get token: ", token)
+		tokenString = tokenString[7:]
+		token, claims, err := common.ParseToken(tokenString)
 
-		// 初始化一个JWT对象实例，并根据结构体方法来解析token
-		j := NewJWT()
-		// 解析token中包含的相关信息(有效载荷)
-		claims, err := j.ParserToken(token)
-		if err != nil {
-			// token过期
-			if err.Error() == "token不可用" {
-				c.JSON(http.StatusOK, gin.H{
-					"status": -1,
-					"msg":    "token授权已过期，请重新申请授权",
-					"data":   nil,
-				})
-				c.Abort()
-				return
-			}
-			// 其他错误
-			c.JSON(http.StatusOK, gin.H{
-				"status": -1,
-				"msg":    err.Error(),
-				"data":   nil,
+		// 该用户已经被禁用
+		if claims.Enable == 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"code": constant.DisableUserError,
+				"data": nil,
+				"msg": "该用户是禁用状态，请联系管理员",
 			})
-			c.Abort()
+			ctx.Abort()
 			return
 		}
-		// 将解析后的有效载荷claims重新写入gin.Context引用对象中
-		c.Set("claims", claims)
+
+		if err != nil || !token.Valid {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"code": 401,
+				"data": nil,
+				"msg": "token出错",
+			})
+			ctx.Abort()
+			return
+		}
+
+		// 判断该用户的token是否一致
+		if tokenString != global.RedisClient.Get(global.Context, "user_token_"+claims.Account).Val() {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"code": 401,
+				"data": nil,
+				"msg": "token出错",
+			})
+			ctx.Abort()
+			return
+		}
+
+		// 给该用户续期
+		global.RedisClient.SetEX(global.Context, "user_token_"+claims.Account, tokenString, 6 * time.Hour)
+
+		ctx.Set("claims", claims)
+		ctx.Next()
 	}
 }
