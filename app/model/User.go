@@ -18,8 +18,6 @@ type User struct {
 	Enable int			`gorm:"type:smallint;default:1" json:"enable"`
 	RoleId	int			`gorm:"default:666666" json:"role_id"`
 
-	RoleName string		`gorm:"type:varchar(10);default:user"`
-
 	// 用户登录时默认的角色
 	Role		Role	`json:"role"`
 	// 该用户拥有的所有角色列表

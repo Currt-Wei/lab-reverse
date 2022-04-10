@@ -127,3 +127,14 @@ CREATE TABLE apply (
       `dates` varchar(500) DEFAULT NULL COMMENT '申请区间',
       PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `role` (
+                        `id` INT PRIMARY KEY auto_increment,
+                        `name` VARCHAR(100),
+                        `remark` VARCHAR(100)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `user_role` (
+                             `user_id` INT,
+                             `role_id` INT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

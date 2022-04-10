@@ -182,7 +182,7 @@ func Login(ctx *gin.Context) {
 	global.RedisClient.SetEX(global.Context, "user_token_"+user.Account, token, 24 * time.Hour)
 
 	// 返回数据
-	response.OkWithDetailed("200", gin.H{"token":token, "role":user.RoleName, "user":dto.ToUserDtoAndRole(*user)}, "登录成功", ctx)
+	response.OkWithDetailed("200", gin.H{"token":token, "user":dto.ToUserDtoAndRole(*user)}, "登录成功", ctx)
 }
 
 // Logout 退出登录

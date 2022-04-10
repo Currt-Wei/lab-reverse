@@ -35,7 +35,6 @@ func ToUserDto(user model.User) UserDto {
 		Grade: user.Grade,
 		Identity: user.Identity,
 		Enable: user.Enable,
-		RoleName: user.RoleName,
 	}
 }
 
@@ -60,7 +59,6 @@ func ToUserDtoAndRole(user model.User) UserDtoAndRole {
 			Grade:     user.Grade,
 			Identity:  user.Identity,
 			Enable:    user.Enable,
-			RoleName:  user.RoleName,
 		},
 		Role: user.Role,
 		Roles: user.Roles,
