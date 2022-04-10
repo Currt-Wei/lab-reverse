@@ -66,9 +66,9 @@ const SearchApplyFail string = "BS4029"		// 查询可申请信息失败
 const GetOutsideWeatherFail string = "BS4030"		// 获取外部天气失败
 const EntranceGuardFail string = "BS4031"		// 获取门禁申请失败
 
-
-// CodeError 验证码错误
-const CodeError string = "LPS4001"
-
-// DisableUserError 禁用的用户
-const DisableUserError = "LPS4102"
+//
+//// CodeError 验证码错误
+//const CodeError string = "LPS4001"
+//
+//// DisableUserError 禁用的用户
+//const DisableUserError = "LPS4102"

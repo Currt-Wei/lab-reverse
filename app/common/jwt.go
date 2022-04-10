@@ -8,8 +8,14 @@ import (
 
 var jwtKey = []byte("2022lab_portal_system")
 
+
 type Claims struct {
 	UserId uint
+	Account		string
+	Enable		int
+	RoleId		int
+	Identity	string
+	Email 		string
 	jwt.StandardClaims
 }
 

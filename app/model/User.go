@@ -1,9 +1,6 @@
 package model
 
-import (
-	"lab-reverse/app/middleware/log"
-)
-
+import 	"lab-reverse/app/middleware/log"
 
 type User struct {
 	Id uint `json:"id"`
@@ -19,11 +16,21 @@ type User struct {
 	Grade string		`gorm:"type:varchar(10)"`
 	Identity string		`gorm:"type:varchar(10);default:student"`
 	Enable int			`gorm:"type:smallint;default:1" json:"enable"`
+	RoleId	int			`json:"role_id"`
 
-	RoleId string		`gorm:"type:varchar(10);default:user"`
+	RoleName string		`gorm:"type:varchar(10);default:user"`
+
+	TeamMembers	[]TeamMember	`gorm:"foreignKey:Account;references:Account"`
+	ContestSignups []ContestSignup	`gorm:"polymorphic:Target;polymorphicValue:single"`
+	Contests	[]Contest		`json:"contest" gorm:"many2many:contest_judge;foreignKey:Id;joinForeignKey:TeacherId;References:Id;JoinReferences:ContestId"`
+
+	// 用户登录时默认的角色
+	Role		Role	`json:"role"`
+	// 该用户拥有的所有角色列表
+	Roles		[]Role	`json:"roles" gorm:"many2many:user_role;foreignKey:Id;joinForeignKey:UserId;References:Id;joinReferences:RoleId"`
 }
 
-func (S User) TableName() string {
+func (u User) TableName() string {
 	return "user"
 }
 

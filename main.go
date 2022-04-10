@@ -4,10 +4,12 @@ import (
 	"lab-reverse/app/model"
 	"lab-reverse/app/router"
 	"lab-reverse/constant"
+	"lab-reverse/global"
 	"lab-reverse/util"
 )
 
 func main() {
+	global.InitGlobalVariable()
 	constant.InitEmailSetting()
 	//util.InitMQTT()
 	constant.InitMysqlSetting()

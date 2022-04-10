@@ -5,12 +5,15 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"golang.org/x/crypto/bcrypt"
+	_ "golang.org/x/crypto/bcrypt"
 	"lab-reverse/app/common"
+	"lab-reverse/app/dto"
 	"lab-reverse/app/middleware"
 	"lab-reverse/app/model"
+	"lab-reverse/app/model/response"
 	"lab-reverse/app/service"
 	"lab-reverse/constant"
+	"lab-reverse/global"
 	"log"
 	"net/http"
 	"strconv"
@@ -48,6 +51,7 @@ func TestToken(c *gin.Context) {
 	return
 }
 
+
 // Register 用户注册
 // @Summary 学生/教师注册
 // @Tags Register
@@ -57,7 +61,8 @@ func TestToken(c *gin.Context) {
 // @Success 200 {string} string
 // @Router /register [post]
 func Register(ctx *gin.Context) {
-	var db = model.DB
+	var userService service.UserService
+
 	var tmp = struct {
 		model.User
 		Code string
@@ -65,150 +70,87 @@ func Register(ctx *gin.Context) {
 	// 绑定数据
 	if err := ctx.Bind(&tmp); err != nil {
 		log.Println("[register]注册绑定数据出错")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg": "注册绑定数据出错",
-		})
+		response.FailWithDetailed("400", nil, "注册绑定数据出错", ctx)
 		return
 	}
 	stu := tmp.User
 
 	// 验证邮箱验证码是否正确
-	emailCode, found := constant.EmailCache.Get("user_" + stu.Email)
-	if !found || tmp.Code != emailCode {
+	// emailCode, found := constant.EmailCache.Get("user_" + stu.Email)
+	emailCode, err := global.RedisClient.Get(global.Context, "user_register_" + stu.Email).Result()
+	if err != nil || tmp.Code != emailCode {
 		log.Println("[register]验证码错误")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": constant.CodeError,
-			"data": nil,
-			"msg": "验证码错误",
-		})
+		response.FailWithDetailed(constant.CodeError, nil, "验证码错误", ctx)
 		return
 	}
 
 	// 验证字段正确性
 	validate := validator.New()
-	err := validate.Struct(&stu)
+	err = validate.Struct(&stu)
 	if err != nil {
 		log.Println("[register]字段验证错误")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg": err.Error(),
-		})
+		response.FailWithDetailed("400", nil, err.Error(), ctx)
 		return
 	}
 
-	// 判断学号是否重复
-	var temp model.User
-	db.Where("account", stu.Account).Find(&temp)
-	if temp.Id != 0 {
-		log.Println("[register]该用户已注册")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg": "该用户已注册",
-		})
-		return
-	}
-
-	// 密码加密
-	password, err := bcrypt.GenerateFromPassword([]byte(stu.Password), bcrypt.DefaultCost)
-	if err != nil {
-		log.Println("[register]密码加密失败")
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"data": nil,
-			"msg": "系统出错",
-		})
-		return
-	}
-	stu.Password = string(password)
-	err = db.Create(&stu).Error
-	if err != nil {
-		log.Println("[register]创建用户失败, err:", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"data": nil,
-			"msg": "创建用户失败",
-		})
-		return
-	}
+	err, _ = userService.Register(&stu)
 	// 删掉邮箱验证码
-	constant.EmailCache.Delete("stu_" + stu.Email)
-	ctx.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": nil,
-		"msg": "注册成功",
-	})
+	// constant.EmailCache.Delete("stu_" + stu.Email)
+	global.RedisClient.Del(global.Context, "stu_register_" + stu.Email)
+	if err != nil {
+		response.FailWithDetailed("400", nil, err.Error(), ctx)
+		return
+	}
+	response.OkWithDetailed("200", nil, "注册成功", ctx)
 }
 
+// Login 登录
 func Login(ctx *gin.Context) {
-	var db = model.DB
+	var userService service.UserService
+
 	var loginUser model.User
 	// 获取账号密码
 	if err := ctx.Bind(&loginUser); err != nil {
 		log.Println("[login]绑定数据出错")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg": "绑定数据出错",
-		})
+		response.FailWithDetailed("400", nil, "绑定数据出错", ctx)
 		return
 	}
-	// 查出当前用户
-	var temp model.User
-	db.Where("account", loginUser.Account).Find(&temp)
-	if temp.Id == 0 {
-		log.Println("[login]该用户不存在")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg": "账号或密码错误",
-		})
-		return
-	}
-	// 对比密码是否错误
-	err := bcrypt.CompareHashAndPassword([]byte(temp.Password), []byte(loginUser.Password))
+	// 登录
+	err, user := userService.Login(&loginUser)
+
 	if err != nil {
-		log.Println("[login]密码错误")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg": "账号或密码错误",
-		})
-		return
-	}
-	// 查看用户是否是启用状态
-	if temp.Enable == 0 {
-		log.Println("[login]该用户是禁用状态")
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": constant.DisableUserError,
-			"data": nil,
-			"msg": "该用户是禁用状态，请联系管理员",
-		})
-		return
-	}
-	// 登录成功，返回token
-	token, err := common.ReleaseToken(temp)
-	if err != nil {
-		log.Println("[login]生成token出错")
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"data": nil,
-			"msg": "生成token出错",
-		})
+		log.Println("[login]", err.Error())
+		response.FailWithDetailed("400", nil, err.Error(), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": gin.H{
-			"token": token,
-			"role": temp.RoleId,
-		},
-		"msg": "登录成功",
-	})
+	// 查看用户是否是启用状态
+	if user.Enable == 0 {
+		log.Println("[login]该用户是禁用状态")
+		response.FailWithDetailed(constant.DisableUserError, nil, "该用户是禁用状态，请联系管理员", ctx)
+		return
+	}
+
+	// 登录成功，返回token
+	token, err := common.ReleaseToken(*user)
+	if err != nil {
+		log.Println("[login]生成token出错")
+		response.FailWithDetailed("500", nil, "生成token出错", ctx)
+		return
+	}
+
+	// 将token存入redis，设置过期时间为6小时先
+	global.RedisClient.SetEX(global.Context, "user_token_"+user.Account, token, 24 * time.Hour)
+
+	// 返回数据
+	response.OkWithDetailed("200", gin.H{"token":token, "role":user.RoleName, "user":dto.ToUserDtoAndRole(*user)}, "登录成功", ctx)
+}
+
+// Logout 退出登录
+func Logout(ctx *gin.Context) {
+	claims := ctx.MustGet("claims").(*common.Claims)
+	global.RedisClient.Del(global.Context, "user_token_" + claims.Account)
+	response.OkWithDetailed("200", nil, "退出登录成功", ctx)
 }
 
 // Login 登陆
