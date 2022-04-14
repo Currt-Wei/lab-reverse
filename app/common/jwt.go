@@ -21,11 +21,16 @@ type Claims struct {
 
 // ReleaseToken 生成token
 func ReleaseToken(user model.User) (string, error) {
-	expirationTime := time.Now().Add(7 * 24 * time.Hour)	// 过期时间
+	//expirationTime := time.Now().Add(7 * 24 * time.Hour)	// 过期时间
 	claims := &Claims{
 		UserId: user.Id,
+		Account: user.Account,
+		Enable: user.Enable,
+		RoleId: user.RoleId,
+		Identity: user.Identity,
+		Email: user.Email,
 		StandardClaims: jwt.StandardClaims {
-			ExpiresAt: expirationTime.Unix(),
+			//ExpiresAt: expirationTime.Unix(),
 			IssuedAt: time.Now().Unix(),	// 签发时间
 			Issuer: "scut_cs_lab_portal_system",
 		},
