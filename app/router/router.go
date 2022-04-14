@@ -16,7 +16,7 @@ func InitRouter() {
 
 
 	// 使用自定义的jwt认证
-	//r.Use(middleware.JWTAuth())
+	r.Use(middleware.JWTAuth())
 	// 权限验证
 	//r.Use(middleware.Authorize())
 
