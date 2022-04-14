@@ -84,9 +84,9 @@ func GetReserveInfo(UserId uint) ([]Reservation,error){
 }
 
 func TurnToAdmin(user User) error{
-	return DB.Model(&user).Where("account",user.Account).Update("RoleId","1").Error
+	return DB.Model(&user).Where("account",user.Account).Update("RoleId","888888").Error
 }
 
 func TurnToUser(user User) error{
-	return DB.Model(&user).Where("account",user.Account).Update("RoleId","3").Error
+	return DB.Model(&user).Where("account",user.Account).Update("RoleId","666666").Error
 }
