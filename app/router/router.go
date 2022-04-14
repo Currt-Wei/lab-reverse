@@ -55,7 +55,7 @@ func InitRouter() {
 	r.POST("/findAllSeat",controller.FindAllSeat)
 	r.POST("/deleteLab",controller.DeleteLab)
 
-	err := r.Run()
+	err := r.Run(":8081")
 	if err != nil {
 		log.Logger().Errorf("路由初始化失败, %s", err)
 		return
