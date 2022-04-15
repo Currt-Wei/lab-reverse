@@ -95,7 +95,7 @@ insert into reservation (user_name,account, lab_name, seat_name, reserve_date, t
 insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A3','2022-01-23','8:50:00-10:25:00');
 insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A4','2022-01-23','8:50:00-10:25:00');
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -113,7 +113,7 @@ CREATE TABLE `user` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_user_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-insert into user (account,name,email, password, role_id) value ('201820220001','张三','zhansan@qq.com','123456','1');
+insert into users (account,name,email, password, role_id) value ('201820220001','张三','zhansan@qq.com','123456','1');
 
 CREATE TABLE apply (
       `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室申请表的主键',
