@@ -23,12 +23,15 @@ func InitRouter() {
 	r.POST("/register", controller.Register)
 	r.POST("/login", controller.Login)
 	r.POST("/send-verification-code", controller.SendVerificationCode)
+	r.POST("/getOutsideWeather", controller.GetOutsideWeather)
+	r.POST("/entranceGuard", controller.EntranceGuard)
+	r.GET("/findAllAnnouncement", controller.FindAllAnnouncement)
 	//r.POST("/PushTopic", controller.PushTopic)
 	api:=r.Group("")
 	api.Use(middleware.JWTAuth())
-	api.POST("/entranceGuard", controller.EntranceGuard)
-	api.POST("/getOutsideWeather", controller.GetOutsideWeather)
-	api.POST("/email", controller.EmailTest)
+	//api.POST("/entranceGuard", controller.EntranceGuard)
+	//api.POST("/getOutsideWeather", controller.GetOutsideWeather)
+
 	api.POST("/searchApply", controller.SearchApply)
 	api.GET("/getPersonalApply", controller.GetPersonalApply)
 	api.GET("/getApply", controller.GetApply)
@@ -40,7 +43,7 @@ func InitRouter() {
 	api.POST("/turnToAdmin", controller.TurnToAdmin)
 	api.POST("/addAnnouncement", controller.AddAnnouncement)
 	api.POST("/deleteAnnouncement", controller.DeleteAnnouncement)
-	api.GET("/findAllAnnouncement", controller.FindAllAnnouncement)
+	//api.GET("/findAllAnnouncement", controller.FindAllAnnouncement)
 	api.POST("/reverseSeat", controller.ReserveSeat)
 	api.POST("/searchSeat", controller.SearchSeat)
 	api.POST("/getInfoByAccount", controller.GetInfoByAccount)
@@ -57,7 +60,7 @@ func InitRouter() {
 	api.POST("/findAllSeat",controller.FindAllSeat)
 	api.POST("/deleteLab",controller.DeleteLab)
 
-	err := r.Run()
+	err := r.Run(":8081")
 	if err != nil {
 		log.Logger().Errorf("路由初始化失败, %s", err)
 		return
