@@ -13,19 +13,75 @@ var f mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	fmt.Printf("MSG: %s\n", msg.Payload())
 }
 
+var Vol Voltage
+var Cur Current
+var ActivePower Active_power
+var ReactivePower Reactive_power
+var ApparentPower Apparent_power
+var Fac Factor
+var Ang Angel
+var Neutral int
+var Frequency int
+var Temperature int
+
 func MyCB(c mqtt.Client,msg mqtt.Message){
 	//fmt.Printf("MY_TOPIC: %s\n", msg.Topic())
 	//fmt.Printf("MY_MSG: %s\n", msg.Payload())
-	var ans SN
+	var ans SN1
 	json.Unmarshal([]byte(msg.Payload()),&ans)
-	if ans.Data_type=="meter_sn"{
-		fmt.Println("Timestamp:",ans.Timestamp)
-		fmt.Println("Meter_sn:",ans.Meter_sn)
-		fmt.Println("Data_type:",ans.Data_type)
-		fmt.Println("Data:",ans.Data)
-		fmt.Println("ans:",ans)
-	}
+	fmt.Println("ans:",ans)
+	fmt.Println("Timestamp:",ans.Timestamp)
+	fmt.Println("Meter_sn:",ans.Meter_sn)
+	fmt.Println("Data_type:",ans.Data_type)
 
+	if(ans.Data_type=="voltage"){
+		Vol=ans.Data
+	}
+	if(ans.Data_type=="current"){
+		var ans SN2
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		Cur=ans.Data
+	}
+	if(ans.Data_type=="active_power"){
+		var ans SN3
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		ActivePower=ans.Data
+	}
+	if(ans.Data_type=="reactive_power"){
+		var ans SN4
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		ReactivePower=ans.Data
+	}
+	if(ans.Data_type=="apparent_power"){
+		var ans SN5
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		ApparentPower=ans.Data
+	}
+	if(ans.Data_type=="factor"){
+		var ans SN6
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		Fac=ans.Data
+	}
+	if(ans.Data_type=="angel"){
+		var ans SN7
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		Ang=ans.Data
+	}
+	if(ans.Data_type=="neutral"){
+		var ans SN8
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		Neutral=ans.Data
+	}
+	if(ans.Data_type=="frequency"){
+		var ans SN8
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		Frequency=ans.Data
+	}
+	if(ans.Data_type=="temperature"){
+		var ans SN8
+		json.Unmarshal([]byte(msg.Payload()),&ans)
+		Temperature=ans.Data
+	}
 
 
 }
@@ -35,12 +91,108 @@ type AVA struct {
 	Device_mac string `json:"device_mac"`
 }
 
-type SN struct {
+type SN1 struct {
 	Timestamp string `json:"timestamp"`
 	Meter_sn string	`json:"meter_sn"`
 	Data_type string `json:"data_type"`
-	Data string `json:"data"`
+	Data Voltage `json:"data"`
 }
+
+type SN2 struct {
+	Timestamp string `json:"timestamp"`
+	Meter_sn string	`json:"meter_sn"`
+	Data_type string `json:"data_type"`
+	Data Current `json:"data"`
+}
+
+type SN3 struct {
+	Timestamp string `json:"timestamp"`
+	Meter_sn string	`json:"meter_sn"`
+	Data_type string `json:"data_type"`
+	Data Active_power `json:"data"`
+}
+
+type SN4 struct {
+	Timestamp string `json:"timestamp"`
+	Meter_sn string	`json:"meter_sn"`
+	Data_type string `json:"data_type"`
+	Data Reactive_power `json:"data"`
+}
+
+type SN5 struct {
+	Timestamp string `json:"timestamp"`
+	Meter_sn string	`json:"meter_sn"`
+	Data_type string `json:"data_type"`
+	Data Apparent_power `json:"data"`
+}
+
+type SN6 struct {
+	Timestamp string `json:"timestamp"`
+	Meter_sn string	`json:"meter_sn"`
+	Data_type string `json:"data_type"`
+	Data Factor `json:"data"`
+}
+
+type SN7 struct {
+	Timestamp string `json:"timestamp"`
+	Meter_sn string	`json:"meter_sn"`
+	Data_type string `json:"data_type"`
+	Data Angel `json:"data"`
+}
+
+type SN8 struct {
+	Timestamp string `json:"timestamp"`
+	Meter_sn string	`json:"meter_sn"`
+	Data_type string `json:"data_type"`
+	Data int `json:"data"`
+}
+
+type Voltage struct{
+	VoltageA int `json:"voltageA"`
+	VoltageB int `json:"voltageB"`
+	VoltageC int `json:"voltageC"`
+}
+
+type Current struct{
+	CurrentA int `json:"currentA"`
+	CurrentB int `json:"currentB"`
+	CurrentC int `json:"currentC"`
+}
+
+type Active_power struct{
+	PowerTotal int `json:"powerTotal"`
+	Active_powerA int `json:"powerA"`
+	Active_powerB int `json:"powerB"`
+	Active_powerC int `json:"powerC"`
+}
+
+type Reactive_power struct{
+	PowerTotal int `json:"powerTotal"`
+	Reactive_powerA int `json:"powerA"`
+	Reactive_powerB int `json:"powerB"`
+	Reactive_powerC int `json:"powerC"`
+}
+
+type Apparent_power struct{
+	PowerTotal int `json:"powerTotal"`
+	Apparent_powerA int `json:"powerA"`
+	Apparent_powerB int `json:"powerB"`
+	Apparent_powerC int `json:"powerC"`
+}
+
+type Factor struct{
+	FactorTotal int `json:"factorTotal"`
+	FactorA int `json:"factorA"`
+	FactorB int `json:"factorB"`
+	FactorC int `json:"factorC"`
+}
+
+type Angel struct{
+	AngelA int `json:"angelA"`
+	AngelB int `json:"angelB"`
+	AngelC int `json:"angelC"`
+}
+
 
 func InitMQTT() {
 

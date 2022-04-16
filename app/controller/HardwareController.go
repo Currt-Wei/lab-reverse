@@ -73,3 +73,22 @@ func EntranceGuard(ctx *gin.Context)  {
 
 	return
 }
+
+func GetElectricMeterData(ctx *gin.Context){
+	var electricMeterData model.ElectricMeterData
+	electricMeterData.Voltage=util.Vol
+	electricMeterData.Current=util.Cur
+	electricMeterData.Active_power=util.ActivePower
+	electricMeterData.Reactive_power=util.ReactivePower
+	electricMeterData.Apparent_power=util.ApparentPower
+	electricMeterData.Factor=util.Fac
+	electricMeterData.Angel=util.Ang
+	electricMeterData.Neutral=util.Neutral
+	electricMeterData.Frequency=util.Frequency
+	electricMeterData.Temperature=util.Temperature
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": constant.GetOutsideWeatherSuccess,
+		"data": electricMeterData,
+		"msg": "查询成功",
+	})
+}

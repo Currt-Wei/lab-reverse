@@ -26,6 +26,7 @@ func InitRouter() {
 	r.POST("/getOutsideWeather", controller.GetOutsideWeather)
 	r.POST("/entranceGuard", controller.EntranceGuard)
 	r.GET("/findAllAnnouncement", controller.FindAllAnnouncement)
+	r.GET("/getElectricMeterData", controller.GetElectricMeterData)
 	//r.POST("/PushTopic", controller.PushTopic)
 	api:=r.Group("")
 	api.Use(middleware.JWTAuth())
