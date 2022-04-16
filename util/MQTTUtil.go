@@ -29,10 +29,10 @@ func MyCB(c mqtt.Client,msg mqtt.Message){
 	//fmt.Printf("MY_MSG: %s\n", msg.Payload())
 	var ans SN1
 	json.Unmarshal([]byte(msg.Payload()),&ans)
-	fmt.Println("ans:",ans)
-	fmt.Println("Timestamp:",ans.Timestamp)
-	fmt.Println("Meter_sn:",ans.Meter_sn)
-	fmt.Println("Data_type:",ans.Data_type)
+	//fmt.Println("ans:",ans)
+	//fmt.Println("Timestamp:",ans.Timestamp)
+	//fmt.Println("Meter_sn:",ans.Meter_sn)
+	//fmt.Println("Data_type:",ans.Data_type)
 
 	if(ans.Data_type=="voltage"){
 		Vol=ans.Data
