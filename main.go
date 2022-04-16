@@ -17,3 +17,6 @@ func main() {
 	model.LoadModelDB() // 加载model中使用的db
 	router.InitRouter()
 }
+
+
+
