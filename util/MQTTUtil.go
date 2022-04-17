@@ -206,6 +206,20 @@ type InnerLive struct {
 	Humidity int `json:"humidity"`
 }
 
+type DoorReq struct {
+	Device_id string `json:"device_id"`
+	Device_type string `json:"device_type"`
+	Device_mac string `json:"device_mac"`
+	Timestamp string `json:"timestamp"`
+	Data Door `json:"data"`
+}
+
+type Door struct {
+	Secret string `json:"secret"`
+	Card_id string `json:"card_id"`
+	Card_label string `json:"card_label"`
+}
+
 var MqttClient mqtt.Client
 var InsideWeather InnerLive
 func InitElecMQTT() {
@@ -284,5 +298,27 @@ func MyESPCB(c mqtt.Client,msg mqtt.Message){
 	//fmt.Println("Meter_sn:",ans.Meter_sn)
 	//fmt.Println("Data_type:",ans.Data_type)
 	InsideWeather=ans.Data
+
+}
+
+func OpenDoor(){
+	if token := MqttClient.Connect(); token.Wait() && token.Error() != nil {
+		panic(token.Error())
+	}
+	var doorReq DoorReq
+	doorReq.Device_id=""
+	doorReq.Device_mac="7CDFA1B52338"
+	doorReq.Device_type="dlt645"
+	doorReq.Timestamp=""
+	var door Door
+	door.Card_id=""
+	door.Secret=""
+	door.Card_label=""
+	doorReq.Data=door
+	req,_:=json.Marshal(doorReq)
+	// 7CDFA1B52338
+	//发布消息
+	token := MqttClient.Publish("/smarthome/device/control/door/mac", 0, false, string(req))
+	token.Wait()
 
 }

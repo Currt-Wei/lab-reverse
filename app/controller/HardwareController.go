@@ -73,7 +73,7 @@ func EntranceGuard(ctx *gin.Context)  {
 		return
 	}
 	// todo 请求门禁系统
-
+	util.OpenDoor()
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"status": constant.EntranceGuardSuccess,
