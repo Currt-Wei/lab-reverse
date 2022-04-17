@@ -24,7 +24,7 @@ var Neutral int
 var Frequency int
 var Temperature int
 
-func MyCB(c mqtt.Client,msg mqtt.Message){
+func MyElecCB(c mqtt.Client,msg mqtt.Message){
 	//fmt.Printf("MY_TOPIC: %s\n", msg.Topic())
 	//fmt.Printf("MY_MSG: %s\n", msg.Payload())
 	var ans SN1
@@ -193,8 +193,22 @@ type Angel struct{
 	AngelC int `json:"angelC"`
 }
 
+type InnerLiveResp struct {
+	Device_id string `json:"device_id"`
+	Device_type string `json:"device_type"`
+	Device_mac string `json:"device_mac"`
+	Timestamp string `json:"timestamp"`
+	Data InnerLive `json:"data"`
+}
 
-func InitMQTT() {
+type InnerLive struct {
+	Temperature int `json:"temperature"`
+	Humidity int `json:"humidity"`
+}
+
+var MqttClient mqtt.Client
+var InsideWeather InnerLive
+func InitElecMQTT() {
 
 
 	//mqtt.DEBUG = log.New(os.Stdout, "", 0)
@@ -209,13 +223,15 @@ func InitMQTT() {
 	opts.SetPingTimeout(1 * time.Hour)
 
 	c := mqtt.NewClient(opts)
+	MqttClient=c
+
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
 		panic(token.Error())
 	}
 
 	// 订阅主题
 
-	if token := c.Subscribe("/smarthome/dlt645/state/running/7CDFA1D66618", 0, MyCB); token.Wait() && token.Error() != nil {
+	if token := c.Subscribe("/smarthome/dlt645/state/running/7CDFA1D66618", 0, MyElecCB); token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 		os.Exit(1)
 	}
@@ -244,3 +260,29 @@ func InitMQTT() {
 	//time.Sleep(1 * time.Second)
 }
 
+func InitESPMQTT(){
+
+	if token := MqttClient.Connect(); token.Wait() && token.Error() != nil {
+		panic(token.Error())
+	}
+
+	// 订阅主题
+
+	if token := MqttClient.Subscribe("/smarthome/device/sensor/temperature_humidity/7CDFA1D66618", 0, MyESPCB); token.Wait() && token.Error() != nil {
+		fmt.Println(token.Error())
+		os.Exit(1)
+	}
+}
+
+func MyESPCB(c mqtt.Client,msg mqtt.Message){
+	//fmt.Printf("MY_TOPIC: %s\n", msg.Topic())
+	//fmt.Printf("MY_MSG: %s\n", msg.Payload())
+	var ans InnerLiveResp
+	json.Unmarshal([]byte(msg.Payload()),&ans)
+	//fmt.Println("ans:",ans)
+	//fmt.Println("Timestamp:",ans.Timestamp)
+	//fmt.Println("Meter_sn:",ans.Meter_sn)
+	//fmt.Println("Data_type:",ans.Data_type)
+	InsideWeather=ans.Data
+
+}

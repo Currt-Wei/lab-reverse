@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+
+
 type Live struct {
 	Province string `json:"province"`
 	City     string    `json:"city"`
@@ -29,6 +31,7 @@ type RESP struct{
 }
 //9eea91669958b0c9eb61fd00ef014273
 //bb6cfa765968b4b11454a3265440c8a6
+
 const key = "9eea91669958b0c9eb61fd00ef014273"
 const adcode="440100"
 const citycode="020"

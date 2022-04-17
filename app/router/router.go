@@ -23,6 +23,7 @@ func InitRouter() {
 	r.POST("/register", controller.Register)
 	r.POST("/login", controller.Login)
 	r.POST("/send-verification-code", controller.SendVerificationCode)
+	r.POST("/getInsideWeather", controller.GetInsideWeather)
 	r.POST("/getOutsideWeather", controller.GetOutsideWeather)
 	r.POST("/entranceGuard", controller.EntranceGuard)
 	r.GET("/findAllAnnouncement", controller.FindAllAnnouncement)

@@ -28,6 +28,15 @@ func GetOutsideWeather(ctx *gin.Context){
 	})
 }
 
+func GetInsideWeather(ctx *gin.Context){
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": constant.GetInsideWeatherSuccess,
+		"data": util.InsideWeather,
+		"msg": "查询成功",
+	})
+}
+
 func EntranceGuard(ctx *gin.Context)  {
 	var u model.User
 	if err := ctx.ShouldBindJSON(&u); err != nil {
