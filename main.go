@@ -11,8 +11,9 @@ import (
 func main() {
 	global.InitGlobalVariable()
 	constant.InitEmailSetting()
-	//util.InitElecMQTT()
-	//util.InitESPMQTT()
+	util.InitElecMQTT()
+	util.InitESPTHMQTT()
+	//util.InitESPDoorMQTT()
 	constant.InitMysqlSetting()
 	util.InitMysql()
 	model.LoadModelDB() // 加载model中使用的db
