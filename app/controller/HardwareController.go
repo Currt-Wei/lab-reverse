@@ -101,3 +101,23 @@ func GetElectricMeterData(ctx *gin.Context){
 		"msg": "查询成功",
 	})
 }
+
+func LightOn(ctx *gin.Context) {
+
+	util.LightOn()
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 400,
+		"msg": "操作成功",
+	})
+}
+
+func LightOff(ctx *gin.Context) {
+
+	util.LightOff()
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 400,
+		"msg": "操作成功",
+	})
+}

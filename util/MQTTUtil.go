@@ -220,6 +220,18 @@ type Door struct {
 	Card_label string `json:"card_label"`
 }
 
+type LightReq struct{
+	Device_id string `json:"device_id"`
+	Device_type string `json:"device_type"`
+	Device_mac string `json:"device_mac"`
+	Timestamp string `json:"timestamp"`
+	Data Light `json:"data"`
+}
+
+type Light struct {
+	Pwm int `json:"pwm"`
+}
+
 var MqttClient mqtt.Client
 var InsideWeather InnerLive
 func InitElecMQTT() {
@@ -274,7 +286,7 @@ func InitElecMQTT() {
 	//time.Sleep(1 * time.Second)
 }
 
-func InitESPMQTT(){
+func InitESPTHMQTT(){
 
 	if token := MqttClient.Connect(); token.Wait() && token.Error() != nil {
 		panic(token.Error())
@@ -282,13 +294,20 @@ func InitESPMQTT(){
 
 	// 订阅主题
 
-	if token := MqttClient.Subscribe("/smarthome/device/sensor/temperature_humidity/7CDFA1D66618", 0, MyESPCB); token.Wait() && token.Error() != nil {
+	if token := MqttClient.Subscribe("/smarthome/device/sensor/temperature_humidity/30AEA4254DC4", 0, MyESPTHCB); token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 		os.Exit(1)
 	}
 }
 
-func MyESPCB(c mqtt.Client,msg mqtt.Message){
+func InitESPDoorMQTT(){
+	if token := MqttClient.Subscribe("/smarthome/device/sensor/door_log/mac", 0, MyESPDoorCB); token.Wait() && token.Error() != nil {
+		fmt.Println(token.Error())
+		os.Exit(1)
+	}
+}
+
+func MyESPTHCB(c mqtt.Client,msg mqtt.Message){
 	//fmt.Printf("MY_TOPIC: %s\n", msg.Topic())
 	//fmt.Printf("MY_MSG: %s\n", msg.Payload())
 	var ans InnerLiveResp
@@ -301,19 +320,23 @@ func MyESPCB(c mqtt.Client,msg mqtt.Message){
 
 }
 
+func MyESPDoorCB(c mqtt.Client,msg mqtt.Message){
+	OpenDoor()
+}
+
 func OpenDoor(){
-	if token := MqttClient.Connect(); token.Wait() && token.Error() != nil {
-		panic(token.Error())
-	}
+	//if token := MqttClient.Connect(); token.Wait() && token.Error() != nil {
+	//	panic(token.Error())
+	//}
 	var doorReq DoorReq
-	doorReq.Device_id=""
+	doorReq.Device_id="th_7CDFA1B52338"
 	doorReq.Device_mac="7CDFA1B52338"
-	doorReq.Device_type="dlt645"
-	doorReq.Timestamp=""
+	doorReq.Device_type="door"
+	doorReq.Timestamp="1645770729,356270"
 	var door Door
-	door.Card_id=""
-	door.Secret=""
-	door.Card_label=""
+	door.Card_id="08EF1234"
+	door.Secret="smart_home_39381656"
+	door.Card_label="user1"
 	doorReq.Data=door
 	req,_:=json.Marshal(doorReq)
 	// 7CDFA1B52338
@@ -321,4 +344,38 @@ func OpenDoor(){
 	token := MqttClient.Publish("/smarthome/device/control/door/mac", 0, false, string(req))
 	token.Wait()
 
+}
+
+func LightOn(){
+	var lightReq LightReq
+	lightReq.Device_id=""
+	lightReq.Device_type=""
+	lightReq.Device_mac=""
+	lightReq.Timestamp=""
+	var light Light
+	light.Pwm=100
+	lightReq.Data=light
+
+	req,_:=json.Marshal(lightReq)
+	// 7CDFA1B52338
+	//发布消息
+	token := MqttClient.Publish("/smarthome/device/control/light/mac", 0, false, string(req))
+	token.Wait()
+}
+
+func LightOff(){
+	var lightReq LightReq
+	lightReq.Device_id=""
+	lightReq.Device_type=""
+	lightReq.Device_mac=""
+	lightReq.Timestamp=""
+	var light Light
+	light.Pwm=0
+	lightReq.Data=light
+
+	req,_:=json.Marshal(lightReq)
+	// 7CDFA1B52338
+	//发布消息
+	token := MqttClient.Publish("/smarthome/device/control/light/mac", 0, false, string(req))
+	token.Wait()
 }

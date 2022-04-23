@@ -236,7 +236,7 @@ func DeleteAnnouncement(ctx *gin.Context){
 	err:=model.DeleteAnnouncement(&a)
 
 	if err!=nil {
-		log.Println("[DeleteAnnouncement]添加公告失败")
+			log.Println("[DeleteAnnouncement]添加公告失败")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code": constant.DeleteAnnouncementFail,
 			"err": err,
