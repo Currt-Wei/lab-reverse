@@ -12,7 +12,7 @@ func main() {
 	global.InitGlobalVariable()
 	constant.InitEmailSetting()
 	util.InitElecMQTT()
-	util.InitESPTHMQTT()
+	//util.InitESPTHMQTT()
 	//util.InitESPDoorMQTT()
 	constant.InitMysqlSetting()
 	util.InitMysql()

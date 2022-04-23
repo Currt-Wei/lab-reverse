@@ -202,8 +202,8 @@ type InnerLiveResp struct {
 }
 
 type InnerLive struct {
-	Temperature int `json:"temperature"`
-	Humidity int `json:"humidity"`
+	Temperature float32 `json:"temperature"`
+	Humidity float32 `json:"humidity"`
 }
 
 type DoorReq struct {
@@ -284,6 +284,12 @@ func InitElecMQTT() {
 	// 断开连接
 	//c.Disconnect(250)
 	//time.Sleep(1 * time.Second)
+
+	//30AEA427B380
+	if token := MqttClient.Subscribe("/smarthome/device/sensor/temperature_humidity/30AEA427B380", 0, MyESPTHCB); token.Wait() && token.Error() != nil {
+		fmt.Println(token.Error())
+		os.Exit(1)
+	}
 }
 
 func InitESPTHMQTT(){
