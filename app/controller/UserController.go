@@ -1,12 +1,16 @@
 package controller
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
+	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/wenzhenxi/gorsa"
 	_ "golang.org/x/crypto/bcrypt"
 	"lab-reverse/app/common"
 	"lab-reverse/app/dto"
@@ -144,16 +148,39 @@ func Register(ctx *gin.Context) {
 	response.OkWithDetailed("200", nil, "注册成功", ctx)
 }
 
-// 公钥加密私钥解密
-func applyPubEPriD(password string) (string,error) {
 
-	pridecrypt, err := gorsa.PriKeyDecrypt(password,constant.PrivateKey)
-	if err != nil {
-		return "",err
+// 加密
+func RsaEncrypt(origData []byte) ([]byte, error) {
+	block, _ := pem.Decode(constant.PublicKey)
+	if block == nil {
+		return nil, errors.New("public key error")
 	}
+	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	pub := pubInterface.(*rsa.PublicKey)
+	return rsa.EncryptPKCS1v15(rand.Reader, pub, origData)
+}
 
-	return pridecrypt,err
+// 解密
+func RsaDecrypt(ciphertext []byte) ([]byte, error) {
+	block, _ := pem.Decode(constant.PrivateKey)
+	if block == nil {
+		return nil, errors.New("private key error!")
+	}
+	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	return rsa.DecryptPKCS1v15(rand.Reader, priv, ciphertext)
+}
 
+func applyPubEPriD(password string) (string,error){
+
+	rsa2,err:=RsaDecrypt([]byte(password))
+	fmt.Println(string(rsa2))
+	return string(rsa2),err
 }
 
 // Login 登录
