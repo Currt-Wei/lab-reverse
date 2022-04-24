@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"github.com/wenzhenxi/gorsa"
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/wenzhenxi/gorsa"
 	_ "golang.org/x/crypto/bcrypt"
 	"lab-reverse/app/common"
 	"lab-reverse/app/dto"
@@ -147,11 +147,13 @@ func Register(ctx *gin.Context) {
 // 公钥加密私钥解密
 func applyPubEPriD(password string) (string,error) {
 
-	pridecrypt, err := gorsa.RSA.PriKeyDECRYPT([]byte(password))
+	pridecrypt, err := gorsa.PriKeyDecrypt(password,constant.PrivateKey)
 	if err != nil {
 		return "",err
 	}
-	return string(pridecrypt) ,nil
+
+	return pridecrypt,err
+
 }
 
 // Login 登录
