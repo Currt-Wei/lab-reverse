@@ -11,7 +11,7 @@ import (
 func main() {
 	global.InitGlobalVariable()
 	constant.InitEmailSetting()
-	util.InitElecMQTT()
+	//util.InitElecMQTT()
 	//util.InitESPTHMQTT()
 	//util.InitESPDoorMQTT()
 	constant.InitMysqlSetting()

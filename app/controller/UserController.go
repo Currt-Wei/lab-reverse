@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/wenzhenxi/gorsa"
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -143,6 +144,16 @@ func Register(ctx *gin.Context) {
 	response.OkWithDetailed("200", nil, "注册成功", ctx)
 }
 
+// 公钥加密私钥解密
+func applyPubEPriD(password string) (string,error) {
+
+	pridecrypt, err := gorsa.RSA.PriKeyDECRYPT([]byte(password))
+	if err != nil {
+		return "",err
+	}
+	return string(pridecrypt) ,nil
+}
+
 // Login 登录
 func Login(ctx *gin.Context) {
 	var userService service.UserService
@@ -154,6 +165,9 @@ func Login(ctx *gin.Context) {
 		response.FailWithDetailed("400", nil, "绑定数据出错", ctx)
 		return
 	}
+	var err error
+	loginUser.Password,err=applyPubEPriD(loginUser.Password)
+
 	// 登录
 	err, user := userService.Login(&loginUser)
 
