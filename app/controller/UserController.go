@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
@@ -178,9 +179,10 @@ func RsaDecrypt(ciphertext []byte) ([]byte, error) {
 
 func applyPubEPriD(password string) (string,error){
 
-	rsa2,err:=RsaDecrypt([]byte(password))
-	fmt.Println(string(rsa2))
-	return string(rsa2),err
+	rsa,err:=base64.StdEncoding.DecodeString(password)
+	pass,err:=RsaDecrypt(rsa)
+
+	return string(pass),err
 }
 
 // Login 登录
