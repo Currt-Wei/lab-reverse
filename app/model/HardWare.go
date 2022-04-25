@@ -38,9 +38,16 @@ func SearchCard(card_id string)(string,error){
 }
 
 func AddCard(card Card)(error){
-	err:=DB.Create(&card)
-	CardId="unknown"
-	return err.Error
+	var card1 Card
+	DB.Where("card_id = ?", card.Card_id).Find(&card1)
+	if(card1.Account==""){
+		err:=DB.Create(&card)
+		CardId="unknown"
+		return err.Error
+	} else{
+		return DB.Model(&card).Where("card_id",card.Card_id).Update("account",card.Account).Error
+	}
+
 }
 
 
