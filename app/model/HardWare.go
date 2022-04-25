@@ -413,7 +413,7 @@ func OpenDoor(card_id string){
 	req,_:=json.Marshal(doorReq)
 	// 7CDFA1B52338
 	//发布消息
-	token := MqttClient.Publish("/smarthome/device/control/door/mac", 0, false, string(req))
+	token := MqttClient.Publish("/smarthome/device/control/door/30AEA427B380", 0, false, string(req))
 	token.Wait()
 
 }
