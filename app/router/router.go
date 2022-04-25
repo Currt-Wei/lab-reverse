@@ -20,6 +20,8 @@ func InitRouter() {
 	// 权限验证
 	//r.Use(middleware.Authorize())
 
+	r.POST("/addCardInfo", controller.AddCardInfo)
+	r.GET("/getCardId", controller.GetCardId)
 	r.POST("/register", controller.Register)
 	r.POST("/login", controller.Login)
 	r.POST("/send-verification-code", controller.SendVerificationCode)

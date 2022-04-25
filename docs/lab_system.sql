@@ -4,6 +4,14 @@ DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `laboratory`;
 DROP TABLE IF EXISTS `announcement`;
 DROP TABLE IF EXISTS `apply`;
+DROP TABLE IF EXISTS `card`;
+
+CREATE TABLE card (
+  id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键，唯一标识一个卡号',
+  account char(12) NOT NULL,
+  card_id varchar(100) UNIQUE NOT NULL COMMENT '卡号',
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 CREATE TABLE announcement (
     id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键，唯一标识一个公告',
@@ -95,7 +103,7 @@ insert into reservation (user_name,account, lab_name, seat_name, reserve_date, t
 insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A3','2022-01-23','8:50:00-10:25:00');
 insert into reservation (user_name,account, lab_name, seat_name, reserve_date, time_interval) values ('张三','20182022001','B3-234','A4','2022-01-23','8:50:00-10:25:00');
 
-CREATE TABLE `users` (
+CREATE TABLE `user` (
     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -113,7 +121,8 @@ CREATE TABLE `users` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_user_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-insert into users (account,name,email, password, role_id) value ('201820220001','张三','zhansan@qq.com','123456','1');
+insert into user (account,name,email, password, role_id) value ('201820220001','张三','zhansan@qq.com','123456','1');
+INSERT INTO `user` (`id`, `created_at`, `updated_at`, `account`, `name`, `email`, `telephone`, `college`, `password`, `degree`, `grade`, `identity`, `enable`, `role_id`) VALUES (22, '2022-04-25 12:53:09', '2022-04-25 12:53:09', '201830600464', 'ye', '2698230239@qq.com', '18818698308', '计算机科学与工程学院', '$2a$10$/osUaK2j2GATdrzIvOeXjusWi1gIuXm1g9xV6n7jfqXkZ4flYK4aK', NULL, NULL, 'student', 1,666666);
 
 CREATE TABLE apply (
       `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '实验室申请表的主键',

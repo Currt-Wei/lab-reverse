@@ -178,10 +178,11 @@ func RsaDecrypt(ciphertext []byte) ([]byte, error) {
 }
 
 func applyPubEPriD(password string) (string,error){
-
+	//rsa1,err:=RsaEncrypt([]byte("123456"))
 	rsa,err:=base64.StdEncoding.DecodeString(password)
+	//fmt.Println("rsa1:",base64.StdEncoding.EncodeToString(rsa1))
 	pass,err:=RsaDecrypt(rsa)
-
+	fmt.Println("aaa::",string(pass))
 	return string(pass),err
 }
 
@@ -197,7 +198,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 	var err error
-	loginUser.Password,err=applyPubEPriD(loginUser.Password)
+	//loginUser.Password,err=applyPubEPriD(loginUser.Password)
 
 	// 登录
 	err, user := userService.Login(&loginUser)

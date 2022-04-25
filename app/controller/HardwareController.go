@@ -32,7 +32,7 @@ func GetInsideWeather(ctx *gin.Context){
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": constant.GetInsideWeatherSuccess,
-		"data": util.InsideWeather,
+		"data": model.InsideWeather,
 		"msg": "查询成功",
 	})
 }
@@ -73,7 +73,7 @@ func EntranceGuard(ctx *gin.Context)  {
 		return
 	}
 	// todo 请求门禁系统
-	util.OpenDoor()
+	model.OpenDoor("111")
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"status": constant.EntranceGuardSuccess,
@@ -85,16 +85,16 @@ func EntranceGuard(ctx *gin.Context)  {
 
 func GetElectricMeterData(ctx *gin.Context){
 	var electricMeterData model.ElectricMeterData
-	electricMeterData.Voltage=util.Vol
-	electricMeterData.Current=util.Cur
-	electricMeterData.Active_power=util.ActivePower
-	electricMeterData.Reactive_power=util.ReactivePower
-	electricMeterData.Apparent_power=util.ApparentPower
-	electricMeterData.Factor=util.Fac
-	electricMeterData.Angel=util.Ang
-	electricMeterData.Neutral=util.Neutral
-	electricMeterData.Frequency=util.Frequency
-	electricMeterData.Temperature=util.Temperature
+	electricMeterData.Voltage=model.Vol
+	electricMeterData.Current=model.Cur
+	electricMeterData.Active_power=model.ActivePower
+	electricMeterData.Reactive_power=model.ReactivePower
+	electricMeterData.Apparent_power=model.ApparentPower
+	electricMeterData.Factor=model.Fac
+	electricMeterData.Angel=model.Ang
+	electricMeterData.Neutral=model.Neutral
+	electricMeterData.Frequency=model.Frequency
+	electricMeterData.Temperature=model.Temperature
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": constant.GetOutsideWeatherSuccess,
 		"data": electricMeterData,
@@ -104,7 +104,7 @@ func GetElectricMeterData(ctx *gin.Context){
 
 func LightOn(ctx *gin.Context) {
 
-	util.LightOn()
+	model.LightOn()
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 400,
@@ -114,10 +114,46 @@ func LightOn(ctx *gin.Context) {
 
 func LightOff(ctx *gin.Context) {
 
-	util.LightOff()
+	model.LightOff()
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 400,
 		"msg": "操作成功",
+	})
+}
+
+func GetCardId(ctx *gin.Context){
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": model.CardId,
+	})
+}
+
+func AddCardInfo(ctx *gin.Context){
+	var card model.Card
+	if err := ctx.ShouldBindJSON(&card); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    "添加卡信心失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err:=model.AddCard(card)
+
+	if err!=nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    "添加卡信心失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusBadRequest, gin.H{
+		"status": 200,
+		"msg":    "添加卡信心成功",
+		"data":   err.Error(),
 	})
 }
