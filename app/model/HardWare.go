@@ -347,9 +347,9 @@ func InitElecMQTT() {
 
 func InitESPTHMQTT(){
 
-	if token := MqttClient.Connect(); token.Wait() && token.Error() != nil {
-		panic(token.Error())
-	}
+	//if token := MqttClient.Connect(); token.Wait() && token.Error() != nil {
+	//	panic(token.Error())
+	//}
 
 	// 订阅主题
 
