@@ -360,7 +360,7 @@ func InitESPTHMQTT(){
 }
 
 func InitESPDoorMQTT(){
-	if token := MqttClient.Subscribe("/smarthome/device/sensor/door_log/mac", 0, MyESPDoorCB); token.Wait() && token.Error() != nil {
+	if token := MqttClient.Subscribe("/smarthome/device/control/door_log/30AEA427B380", 0, MyESPDoorCB); token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 		os.Exit(1)
 	}
