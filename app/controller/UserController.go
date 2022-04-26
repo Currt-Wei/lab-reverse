@@ -1,13 +1,10 @@
 package controller
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
+	"crypto/cipher"
+	"crypto/des"
 	"encoding/base64"
 	"encoding/json"
-	"encoding/pem"
-	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -149,41 +146,32 @@ func Register(ctx *gin.Context) {
 	response.OkWithDetailed("200", nil, "注册成功", ctx)
 }
 
-
-// 加密
-func RsaEncrypt(origData []byte) ([]byte, error) {
-	block, _ := pem.Decode(constant.PublicKey)
-	if block == nil {
-		return nil, errors.New("public key error")
-	}
-	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-	pub := pubInterface.(*rsa.PublicKey)
-	return rsa.EncryptPKCS1v15(rand.Reader, pub, origData)
+//解密
+func MyDESDecrypt(data string, key []byte) string{
+	//倒叙执行一遍加密方法
+	//将字符串转换成字节数组
+	crypted,_ := base64.StdEncoding.DecodeString(data)
+	//将字节秘钥转换成block快
+	block, _ := des.NewCipher(key)
+	//设置解密方式
+	blockMode := cipher.NewCBCDecrypter(block,key)
+	//创建密文大小的数组变量
+	origData := make([]byte, len(crypted))
+	//解密密文到数组origData中
+	blockMode.CryptBlocks(origData,crypted)
+	//去补码
+	origData = PKCS5UnPadding(origData)
+	//打印明文
+	return string(origData)
 }
 
-// 解密
-func RsaDecrypt(ciphertext []byte) ([]byte, error) {
-	block, _ := pem.Decode(constant.PrivateKey)
-	if block == nil {
-		return nil, errors.New("private key error!")
-	}
-	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-	return rsa.DecryptPKCS1v15(rand.Reader, priv, ciphertext)
-}
-
-func applyPubEPriD(password string) (string,error){
-	//rsa1,err:=RsaEncrypt([]byte("123456"))
-	rsa,err:=base64.StdEncoding.DecodeString(password)
-	//fmt.Println("rsa1:",base64.StdEncoding.EncodeToString(rsa1))
-	pass,err:=RsaDecrypt(rsa)
-	fmt.Println("aaa::",string(pass))
-	return string(pass),err
+//去除补码
+func PKCS5UnPadding(origData []byte) []byte {
+	length := len(origData)
+	// 去掉最后一个字节 unpadding 次
+	unpadding := int(origData[length-1])
+	//解密去补码时需取最后一个字节，值为m，则从数据尾部删除m个字节，剩余数据即为加密前的原文
+	return origData[:(length - unpadding)]
 }
 
 // Login 登录
@@ -198,7 +186,9 @@ func Login(ctx *gin.Context) {
 		return
 	}
 	var err error
-	//loginUser.Password,err=applyPubEPriD(loginUser.Password)
+
+	key := []byte("boss")
+	loginUser.Password=MyDESDecrypt(loginUser.Password,key)
 
 	// 登录
 	err, user := userService.Login(&loginUser)
