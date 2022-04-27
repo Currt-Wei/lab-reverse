@@ -19,3 +19,11 @@ func InBlackList(account string) (bool,error){
 	return false,err
 
 }
+
+func AddBlackList(b *BlackList) error{
+	return DB.Create(b).Error
+}
+
+func DeleteBlackList(b *BlackList) error{
+	return DB.Where("account = ?",b.Account).Delete(b).Error
+}

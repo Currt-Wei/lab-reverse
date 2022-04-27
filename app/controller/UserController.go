@@ -264,6 +264,7 @@ func Login(ctx *gin.Context) {
 	}
 	var err error
 
+	// todo 密码对称加密
 	//key := "bosseeff"
 	//plainText, err := desCBCDecrypt([]byte(loginUser.Password), []byte(key))
 	//loginUser.Password=string(plainText)

@@ -435,3 +435,93 @@ func GetAllReserveInfo(c *gin.Context){
 
 	return
 }
+
+
+func AddBlackList(ctx *gin.Context){
+	var b model.BlackList
+	if err := ctx.ShouldBindJSON(&b); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": 401,
+			"msg":    "添加黑名单失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err:=model.AddBlackList(&b)
+
+	if err!=nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"err": err,
+			"msg": "添加黑名单失败",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 400,
+		"msg": "添加黑名单成功",
+	})
+}
+
+func DeleteBlackList(ctx *gin.Context){
+	var a model.BlackList
+	if err := ctx.ShouldBindJSON(&a); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": 401,
+			"msg":    "删除黑名单失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	err:=model.DeleteBlackList(&a)
+
+	if err!=nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"err": err,
+			"msg": "删除黑名单失败",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg": "删除黑名单成功",
+	})
+}
+
+func FindAllBlackList(ctx *gin.Context){
+
+	// 获取分页数据
+	limit, _ := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+
+	//users, err:=service.FindAllUser(data,limit,page)
+	offset := (page - 1) * limit
+
+	var blackList []model.BlackList
+
+	db:=model.DB
+	db = db.Limit(limit).Offset(offset)
+	db = db.Where("id >= 0")
+
+	err := db.Find(&blackList).Error
+
+	if err!=nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"data": err,
+			"msg": "查找黑名单失败",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg": "查找公告成功",
+		"data":blackList,
+	})
+}

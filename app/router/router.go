@@ -20,7 +20,9 @@ func InitRouter() {
 	// 权限验证
 	//r.Use(middleware.Authorize())
 
-	r.POST("/black", controller.InBlackList)
+	r.POST("/addBlackList", controller.AddBlackList)
+	r.POST("/deleteBlackList", controller.DeleteBlackList)
+	r.GET("/findAllBlackList", controller.FindAllBlackList)
 	r.POST("/addCardInfo", controller.AddCardInfo)
 	r.GET("/getCardId", controller.GetCardId)
 	r.POST("/register", controller.Register)
