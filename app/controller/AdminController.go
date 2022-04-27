@@ -275,7 +275,7 @@ func FindAllAnnouncement(ctx *gin.Context){
 
 	if err!=nil {
 		log.Println("[DeleteAnnouncement]添加公告失败")
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusOK, gin.H{
 			"code": constant.FindAllAnnouncementFail,
 			"err": err,
 			"msg": "查找公告失败",

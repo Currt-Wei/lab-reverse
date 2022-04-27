@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"bytes"
 	"crypto/cipher"
 	"crypto/des"
-	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -146,32 +147,108 @@ func Register(ctx *gin.Context) {
 	response.OkWithDetailed("200", nil, "注册成功", ctx)
 }
 
-//解密
-func MyDESDecrypt(data string, key []byte) string{
-	//倒叙执行一遍加密方法
-	//将字符串转换成字节数组
-	crypted,_ := base64.StdEncoding.DecodeString(data)
-	//将字节秘钥转换成block快
-	block, _ := des.NewCipher(key)
-	//设置解密方式
-	blockMode := cipher.NewCBCDecrypter(block,key)
-	//创建密文大小的数组变量
-	origData := make([]byte, len(crypted))
-	//解密密文到数组origData中
-	blockMode.CryptBlocks(origData,crypted)
-	//去补码
-	origData = PKCS5UnPadding(origData)
-	//打印明文
-	return string(origData)
+func desCBCEncrypt(plainText /*明文*/, key []byte) ([]byte, error) {
+	//第一步：创建des密码接口, 输入秘钥，返回接口
+	block, err := des.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	//第二步：创建cbc分组
+	// 返回一个密码分组链接模式的、底层用b解密的BlockMode接口
+	// func NewCBCEncrypter(b Block, iv []byte) BlockMode
+	blockSize := block.BlockSize()
+
+	//创建一个8字节的初始化向量
+	iv := bytes.Repeat([]byte("1"), blockSize)
+
+	mode := cipher.NewCBCEncrypter(block, iv)
+
+	//第三步：填充
+	//TODO
+	plainText, err = paddingNumber(plainText, blockSize)
+	if err != nil {
+		return nil, err
+	}
+
+	//第四步：加密
+	// type BlockMode interface {
+	// 	// 返回加密字节块的大小
+	// 	BlockSize() int
+	// 	// 加密或解密连续的数据块，src的尺寸必须是块大小的整数倍，src和dst可指向同一内存地址
+	// 	CryptBlocks(dst, src []byte)
+	// }
+
+	//密文与明文共享空间，没有额外分配
+	mode.CryptBlocks(plainText /*密文*/, plainText /*明文*/)
+
+	return plainText, nil
 }
 
-//去除补码
-func PKCS5UnPadding(origData []byte) []byte {
-	length := len(origData)
-	// 去掉最后一个字节 unpadding 次
-	unpadding := int(origData[length-1])
-	//解密去补码时需取最后一个字节，值为m，则从数据尾部删除m个字节，剩余数据即为加密前的原文
-	return origData[:(length - unpadding)]
+//输入密文，得到明文
+func desCBCDecrypt(encryptData, key []byte) ([]byte, error) {
+	//TODO
+	//第一步：创建des密码接口
+	block, err := des.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	//第二步：创建cbc分组
+	iv := bytes.Repeat([]byte("1"), block.BlockSize())
+	mode := cipher.NewCBCDecrypter(block, iv)
+
+	//第三步：解密
+	mode.CryptBlocks(encryptData /*明文*/, encryptData /*密文*/)
+
+	//第四步: 去除填充
+	//TODO
+	encryptData, err = unPaddingNumber(encryptData)
+	if err != nil {
+		return nil, err
+	}
+
+	// return []byte("Hello world"), nil
+	return encryptData, nil
+}
+
+//填充数据
+func paddingNumber(src []byte, blockSize int) ([]byte, error) {
+
+	if src == nil {
+		return nil, errors.New("src长度不能小于0")
+	}
+
+	fmt.Println("调用paddingNumber")
+	//1. 得到分组之后剩余的长度 5
+	leftNumber := len(src) % blockSize //5
+
+	//2. 得到需要填充的个数 8 - 5 = 3
+	needNumber := blockSize - leftNumber //3
+
+	//3. 创建一个slice，包含3个3
+	b := byte(needNumber)
+	newSlice := bytes.Repeat([]byte{b}, needNumber) //newSlice  ==》 []byte{3,3,3}
+
+	fmt.Printf("newSclie : %v\n", newSlice)
+	//4. 将新切片追加到src
+	src = append(src, newSlice...)
+
+	return src, nil
+}
+
+//解密后去除填充数据
+func unPaddingNumber(src []byte) ([]byte, error) {
+	fmt.Println("调用unPaddingNumber")
+	//1. 获取最后一个字符
+	lastChar := src[len(src)-1] //byte(3)
+
+	//2. 将字符转换为数字
+	num := int(lastChar) //int(3)
+
+	//3. 截取切片(左闭右开)
+
+	return src[:len(src)-num], nil
 }
 
 // Login 登录
@@ -187,8 +264,9 @@ func Login(ctx *gin.Context) {
 	}
 	var err error
 
-	key := []byte("boss")
-	loginUser.Password=MyDESDecrypt(loginUser.Password,key)
+	key := "bosseeff"
+	plainText, err := desCBCDecrypt([]byte(loginUser.Password), []byte(key))
+	loginUser.Password=string(plainText)
 
 	// 登录
 	err, user := userService.Login(&loginUser)

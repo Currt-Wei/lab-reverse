@@ -13,7 +13,7 @@ func GetOutsideWeather(ctx *gin.Context){
 	weather, err:=model.GetOutsideWeather()
 
 	if err!=nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusOK, gin.H{
 			"code": constant.GetOutsideWeatherFail,
 			"data": nil,
 			"msg": "个人查询所有申请失败",
@@ -51,7 +51,7 @@ func EntranceGuard(ctx *gin.Context)  {
 	b,err:=model.SearchReserve(u.Account)
 
 	if err!=nil{
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusOK, gin.H{
 			"status": constant.EntranceGuardFail,
 			"msg":    "申请门禁失败",
 			"data":   err.Error(),
@@ -65,7 +65,7 @@ func EntranceGuard(ctx *gin.Context)  {
 		// email
 		util.SendEmail(user.Email, "申请门禁失败,未到预约时间")
 
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusOK, gin.H{
 			"status": constant.EntranceGuardFail,
 			"msg":    "申请门禁失败,未到预约时间",
 			"data":   "",
@@ -143,7 +143,7 @@ func AddCardInfo(ctx *gin.Context){
 	err:=model.AddCard(card)
 
 	if err!=nil{
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusOK, gin.H{
 			"status": http.StatusBadRequest,
 			"msg":    "添加卡信心失败",
 			"data":   err.Error(),
@@ -151,7 +151,7 @@ func AddCardInfo(ctx *gin.Context){
 		return
 	}
 
-	ctx.JSON(http.StatusBadRequest, gin.H{
+	ctx.JSON(http.StatusOK, gin.H{
 		"status": 200,
 		"msg":    "添加卡信心成功",
 		"data":   err.Error(),
