@@ -476,3 +476,8 @@ func GetReserveInfo(c *gin.Context){
 	return
 }
 
+func InBlackList(ctx *gin.Context){
+	b,err:=model.InBlackList("201820220006")
+	fmt.Println(b)
+	fmt.Println(err)
+}

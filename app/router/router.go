@@ -20,12 +20,15 @@ func InitRouter() {
 	// 权限验证
 	//r.Use(middleware.Authorize())
 
+	r.POST("/black", controller.InBlackList)
 	r.POST("/addCardInfo", controller.AddCardInfo)
 	r.GET("/getCardId", controller.GetCardId)
 	r.POST("/register", controller.Register)
 	r.POST("/login", controller.Login)
 	r.POST("/send-verification-code", controller.SendVerificationCode)
 	r.POST("/getInsideWeather", controller.GetInsideWeather)
+	r.POST("/saveElectricMeterData", controller.SaveElectricMeterData)
+	r.GET("/getHistoryElectricMeterData", controller.GetHistoryElectricMeterData)
 	r.POST("/getOutsideWeather", controller.GetOutsideWeather)
 	r.POST("/entranceGuard", controller.EntranceGuard)
 	r.GET("/findAllAnnouncement", controller.FindAllAnnouncement)

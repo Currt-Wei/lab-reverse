@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS `laboratory`;
 DROP TABLE IF EXISTS `announcement`;
 DROP TABLE IF EXISTS `apply`;
 DROP TABLE IF EXISTS `card`;
+DROP TABLE IF EXISTS `electricMeter`;
 
 CREATE TABLE card (
   id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键，唯一标识一个卡号',
@@ -146,4 +147,43 @@ CREATE TABLE `role` (
 CREATE TABLE `user_role` (
                              `user_id` INT,
                              `role_id` INT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE electricMeter (
+   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '电表表的主键',
+   `voltageA` int default 0,
+   `voltageB` int default 0,
+   `voltageC` int default 0,
+   `currentA` int default 0,
+   `currentB` int default 0,
+   `currentC` int default 0,
+   `active_powerTotal` int default 0,
+   `active_powerA` int default 0,
+   `active_powerB` int default 0,
+   `active_powerC` int default 0,
+   `reactive_powerTotal` int default 0,
+   `reactive_powerA` int default 0,
+   `reactive_powerB` int default 0,
+   `reactive_powerC` int default 0,
+   `apparent_powerTotal` int default 0,
+   `apparent_powerA` int default 0,
+   `apparent_powerB` int default 0,
+   `apparent_powerC` int default 0,
+   `factorTotal` int default 0,
+   `factorA` int default 0,
+   `factorB` int default 0,
+   `factorC` int default 0,
+   `angelA` int default 0,
+   `angelB` int default 0,
+   `angelC` int default 0,
+   `neutral` int default 0,
+   `frequency` int default 0,
+   `temperature` int default 1,
+   PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+insert into electricMeter (id) value (1);
+
+CREATE TABLE `black_list` (
+    `id` INT PRIMARY KEY auto_increment,
+    `account` bigint unsigned DEFAULT NULL COMMENT '预约人账号'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

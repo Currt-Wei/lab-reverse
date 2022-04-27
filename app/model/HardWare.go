@@ -12,13 +12,44 @@ type ElectricMeterData struct {
 	Voltage Voltage `json:"voltage"`
 	Current Current `json:"current"`
 	Active_power Active_power `json:"active_power"`
-	Reactive_power Reactive_power `json:"reactive_power""`
-	Apparent_power Apparent_power `json:"apparent_power""`
+	Reactive_power Reactive_power `json:"reactive_power"`
+	Apparent_power Apparent_power `json:"apparent_power"`
 	Factor Factor `json:"factor"`
 	Angel Angel `json:"angel"`
 	Neutral int `json:"neutral"`
 	Frequency int `json:"frequency"`
 	Temperature int `json:"temperature"`
+}
+
+type ElectricMeter struct {
+	VoltageA int `json:"voltageA" gorm:"column:voltageA"`
+	VoltageB int `json:"voltageB" gorm:"column:voltageB"`
+	VoltageC int `json:"voltageC" gorm:"column:voltageC"`
+	CurrentA int `json:"currentA" gorm:"column:currentA"`
+	CurrentB int `json:"currentB" gorm:"column:currentB"`
+	CurrentC int `json:"currentC" gorm:"column:currentC"`
+	Active_powerTotal int `json:"active_powerTotal" gorm:"column:active_powerTotal"`
+	Active_powerA int `json:"active_powerA" gorm:"column:active_powerA"`
+	Active_powerB int `json:"active_powerB" gorm:"column:active_powerB"`
+	Active_powerC int `json:"active_powerC" gorm:"column:active_powerC"`
+	Reactive_powerTotal int `json:"reactive_powerTotal" gorm:"column:reactive_powerTotal"`
+	Reactive_powerA int `json:"reactive_powerA" gorm:"column:reactive_powerA"`
+	Reactive_powerB int `json:"reactive_powerB" gorm:"column:reactive_powerB"`
+	Reactive_powerC int `json:"reactive_powerC" gorm:"column:reactive_powerC"`
+	Apparent_powerTotal int `json:"apparent_powerTotal" gorm:"column:apparent_powerTotal"`
+	Apparent_powerA int `json:"apparent_powerA" gorm:"column:apparent_powerA"`
+	Apparent_powerB int `json:"apparent_powerB" gorm:"column:apparent_powerB"`
+	Apparent_powerC int `json:"apparent_powerC" gorm:"column:apparent_powerC"`
+	FactorTotal int `json:"factorTotal" gorm:"column:factorTotal"`
+	FactorA int `json:"factorA" gorm:"column:factorA"`
+	FactorB int `json:"factorB" gorm:"column:factorB"`
+	FactorC int `json:"factorC" gorm:"column:factorC"`
+	AngelA int `json:"angelA" gorm:"column:angelA"`
+	AngelB int `json:"angelB" gorm:"column:angelB"`
+	AngelC int `json:"angelV" gorm:"column:angelC"`
+	Neutral int `json:"neutral" gorm:"column:neutral"`
+	Frequency int `json:"frequency" gorm:"column:frequency"`
+	Temperature int `json:"temperature" gorm:"column:temperature"`
 }
 
 type Card struct {
@@ -29,6 +60,10 @@ type Card struct {
 
 func (a Card) TableName() string {
 	return "card"
+}
+
+func (e ElectricMeter) TableName() string {
+	return "electricMeter"
 }
 
 func SearchCard(card_id string)(string,error){
@@ -247,8 +282,8 @@ type InnerLiveResp struct {
 }
 
 type InnerLive struct {
-	Temperature float32 `json:"temperature"`
-	Humidity float32 `json:"humidity"`
+	Temperature float32 `json:"temperature" gorm:"column:temperature"`
+	Humidity float32 `json:"humidity" gorm:"column:humidity"`
 }
 
 type DoorReq struct {
@@ -457,4 +492,92 @@ func LightOff(){
 	//发布消息
 	token := MqttClient.Publish("/smarthome/device/control/light/mac", 0, false, string(req))
 	token.Wait()
+}
+
+func SaveInsideWeather() error{
+	return DB.Model(&InnerLive{}).Where("id",1).Update("temperature",InsideWeather.Temperature).Update("humidity",InsideWeather.Humidity).Error
+
+}
+
+func GetHistoryInsideWeather() (InnerLive,error){
+	var weather InnerLive
+	err := DB.Where("id = ?", 1).Find(&weather).Error
+	return weather,err
+}
+
+func ElecDataChange(e ElectricMeterData) ElectricMeter{
+	data :=ElectricMeter{}
+	data.Temperature=e.Temperature
+	data.Frequency=e.Frequency
+	data.Neutral=e.Neutral
+	data.AngelA=e.Angel.AngelA
+	data.AngelB=e.Angel.AngelB
+	data.AngelC=e.Angel.AngelC
+	data.FactorTotal=e.Factor.FactorTotal
+	data.FactorA=e.Factor.FactorA
+	data.FactorB=e.Factor.FactorB
+	data.FactorC=e.Factor.FactorC
+	data.Apparent_powerTotal=e.Apparent_power.PowerTotal
+	data.Apparent_powerA=e.Apparent_power.Apparent_powerA
+	data.Apparent_powerB=e.Apparent_power.Apparent_powerB
+	data.Apparent_powerC=e.Apparent_power.Apparent_powerC
+	data.Reactive_powerTotal=e.Reactive_power.PowerTotal
+	data.Reactive_powerA=e.Reactive_power.Reactive_powerA
+	data.Reactive_powerB=e.Reactive_power.Reactive_powerB
+	data.Reactive_powerC=e.Reactive_power.Reactive_powerC
+	data.Active_powerTotal=e.Active_power.PowerTotal
+	data.Active_powerA=e.Active_power.Active_powerA
+	data.Active_powerB=e.Active_power.Active_powerB
+	data.Active_powerC=e.Active_power.Active_powerC
+	data.CurrentA=e.Current.CurrentA
+	data.CurrentB=e.Current.CurrentB
+	data.CurrentC=e.Current.CurrentC
+	data.VoltageA=e.Voltage.VoltageA
+	data.VoltageB=e.Voltage.VoltageB
+	data.VoltageC=e.Voltage.VoltageC
+	return data
+}
+
+func ElecDataChange_back(e ElectricMeter) ElectricMeterData{
+	var data ElectricMeterData
+	data.Temperature=e.Temperature
+	data.Frequency=e.Frequency
+	data.Neutral=e.Neutral
+	data.Angel.AngelA=e.AngelA
+	data.Angel.AngelB=e.AngelB
+	data.Angel.AngelC=e.AngelC
+	data.Factor.FactorTotal=e.FactorTotal
+	data.Factor.FactorA=e.FactorA
+	data.Factor.FactorB=e.FactorB
+	data.Factor.FactorC=e.FactorC
+	data.Apparent_power.PowerTotal=e.Apparent_powerTotal
+	data.Apparent_power.Apparent_powerA=e.Apparent_powerA
+	data.Apparent_power.Apparent_powerB=e.Apparent_powerB
+	data.Apparent_power.Apparent_powerC=e.Apparent_powerC
+	data.Reactive_power.PowerTotal=e.Reactive_powerTotal
+	data.Reactive_power.Reactive_powerA=e.Reactive_powerA
+	data.Reactive_power.Reactive_powerB=e.Reactive_powerB
+	data.Reactive_power.Reactive_powerC=e.Reactive_powerC
+	data.Active_power.PowerTotal=e.Active_powerTotal
+	data.Active_power.Active_powerA=e.Active_powerA
+	data.Active_power.Active_powerB=e.Active_powerB
+	data.Active_power.Active_powerC=e.Active_powerC
+	data.Current.CurrentA=e.CurrentA
+	data.Current.CurrentB=e.CurrentB
+	data.Current.CurrentC=e.CurrentC
+	data.Voltage.VoltageA=e.VoltageA
+	data.Voltage.VoltageB=e.VoltageB
+	data.Voltage.VoltageC=e.VoltageC
+	return data
+}
+
+func SaveElectricMeterData(e ElectricMeter) error{
+	return DB.Model(&ElectricMeter{}).Where("id",1).Updates(e).Error
+
+}
+
+func GetHistoryElectricMeterData() (ElectricMeter,error){
+	var data ElectricMeter
+	err := DB.Where("id = ?", 1).Find(&data).Error
+	return data,err
 }

@@ -37,6 +37,58 @@ func GetInsideWeather(ctx *gin.Context){
 	})
 }
 
+func SaveElectricMeterData(ctx *gin.Context){
+	var e model.ElectricMeterData
+
+	if err := ctx.ShouldBindJSON(&e); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": 401,
+			"msg":    "保存失败",
+			"data":   err.Error(),
+		})
+		return
+	}
+
+	elec:=model.ElecDataChange(e)
+
+	err:=model.SaveElectricMeterData(elec)
+
+	if err!=nil{
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"msg": "保存失败",
+		})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg": "保存成功",
+	})
+}
+
+
+func GetHistoryElectricMeterData(ctx *gin.Context){
+
+	elec,err:=model.GetHistoryElectricMeterData()
+
+	if err!=nil{
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"msg": "获取失败",
+		})
+	}
+
+	data:=model.ElecDataChange_back(elec)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": data,
+		"msg": "获取历史电表数据成功",
+	})
+
+
+}
+
 func EntranceGuard(ctx *gin.Context)  {
 	var u model.User
 	if err := ctx.ShouldBindJSON(&u); err != nil {
