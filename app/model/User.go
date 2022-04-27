@@ -1,6 +1,8 @@
 package model
 
-import 	"lab-reverse/app/middleware/log"
+import (
+	"lab-reverse/app/middleware/log"
+)
 
 type User struct {
 	Id uint `json:"id"`
@@ -90,3 +92,4 @@ func TurnToAdmin(user User) error{
 func TurnToUser(user User) error{
 	return DB.Model(&user).Where("account",user.Account).Update("RoleId","666666").Error
 }
+

@@ -264,9 +264,9 @@ func Login(ctx *gin.Context) {
 	}
 	var err error
 
-	key := "bosseeff"
-	plainText, err := desCBCDecrypt([]byte(loginUser.Password), []byte(key))
-	loginUser.Password=string(plainText)
+	//key := "bosseeff"
+	//plainText, err := desCBCDecrypt([]byte(loginUser.Password), []byte(key))
+	//loginUser.Password=string(plainText)
 
 	// 登录
 	err, user := userService.Login(&loginUser)

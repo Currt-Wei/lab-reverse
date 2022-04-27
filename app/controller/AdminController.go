@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"lab-reverse/app/model"
+	"lab-reverse/app/model/response"
 	"lab-reverse/app/service"
 	"lab-reverse/constant"
 	"log"
@@ -290,64 +291,79 @@ func FindAllAnnouncement(ctx *gin.Context){
 	})
 }
 
-func TurnToAdmin(c *gin.Context){
+//func TurnToAdmin(c *gin.Context){
+//	var u model.User
+//	if err := c.ShouldBindJSON(&u); err != nil {
+//		c.JSON(http.StatusBadRequest, gin.H{
+//			"status": constant.TurnToAdminFail,
+//			"msg":    "更新失败",
+//			"data":   err.Error(),
+//		})
+//		return
+//	}
+//
+//	err := model.TurnToAdmin(u)
+//
+//	if err != nil {
+//		c.JSON(http.StatusOK, gin.H{
+//			"status": constant.TurnToAdminFail,
+//			"msg":    err.Error(),
+//			"data":   "更新失败",
+//		})
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, gin.H{
+//		"status": constant.TurnToAdminSuccess,
+//		"msg":    "更新成功",
+//	})
+//
+//	return
+//}
+
+func ChangeRole(ctx *gin.Context){
 	var u model.User
-	if err := c.ShouldBindJSON(&u); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": constant.TurnToAdminFail,
+	if err := ctx.ShouldBindJSON(&u); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": constant.ChangeRoleFail,
 			"msg":    "更新失败",
 			"data":   err.Error(),
 		})
 		return
 	}
-
-	err := model.TurnToAdmin(u)
-
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": constant.TurnToAdminFail,
-			"msg":    err.Error(),
-			"data":   "更新失败",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": constant.TurnToAdminSuccess,
-		"msg":    "更新成功",
-	})
-
-	return
-}
-
-func TurnToUser(c *gin.Context){
-	var u model.User
-	if err := c.ShouldBindJSON(&u); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": constant.TurnToUserFail,
-			"msg":    "更新失败",
+	// 获取用户id
+	user,err := model.GetUserByAccount(u.Account)
+	if err!=nil{
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status": constant.ChangeRoleFail,
+			"msg":    "获取用户信息失败",
 			"data":   err.Error(),
 		})
 		return
 	}
 
-	err := model.TurnToUser(u)
+	// 用户切换角色
+	_, err = service.ChangeRole(user.Id, u.RoleId)
 
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": constant.TurnToUserFail,
-			"msg":    err.Error(),
-			"data":   "更新失败",
-		})
+		log.Println("[角色管理]用户角色切换失败")
+		response.FailWithDetailed("400", nil, err.Error(), ctx)
 		return
 	}
+		//// 生成新的token返回
+		//token, err := common.ReleaseToken(*user)
+		//if err != nil {
+		//	log.Println("[角色管理]生成token出错")
+		//	response.FailWithDetailed("500", nil, "生成token出错", ctx)
+		//	return
+		//}
+		//
+		//// 更新redis中的token
+		//global.RedisClient.SetEX(global.Context, "user_token_"+user.Account, token, 24 * time.Hour)
+		//
+		//response.OkWithDetailed("200", gin.H{"token":token}, "用户角色切换成功", ctx)
+	response.OkWithDetailed("200", nil, "用户角色切换成功", ctx)
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": constant.TurnToAUserSuccess,
-		"msg":    "更新成功",
-	})
-
-	return
 }
 
 func GetHumiture(ctx *gin.Context){

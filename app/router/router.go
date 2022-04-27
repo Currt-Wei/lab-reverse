@@ -45,8 +45,8 @@ func InitRouter() {
 	api.POST("/allowApply", controller.AllowApply)
 	api.POST("/applyForLab", controller.ApplyForLab)
 
-	api.POST("/turnToUser", controller.TurnToUser)
-	api.POST("/turnToAdmin", controller.TurnToAdmin)
+	api.POST("/changeRole", controller.ChangeRole)
+	//api.POST("/turnToAdmin", controller.TurnToAdmin)
 	api.POST("/addAnnouncement", controller.AddAnnouncement)
 	api.POST("/deleteAnnouncement", controller.DeleteAnnouncement)
 	//api.GET("/findAllAnnouncement", controller.FindAllAnnouncement)

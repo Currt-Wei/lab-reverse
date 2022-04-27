@@ -1,9 +1,12 @@
 package service
 
 import (
+	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"lab-reverse/app/middleware/log"
 	"lab-reverse/app/model"
+	"lab-reverse/global"
 )
 
 func AddUser(user *model.User) (err error) {
@@ -34,4 +37,15 @@ func FindUserByAccount(account string) (*model.User, error) {
 
 	user1, err := model.GetUserByAccount(account)
 	return user1, err
+}
+
+func ChangeRole(userId uint, roleId int) (*model.User, error) {
+	// 查看该用户是否拥有该角色
+	err := global.DB.Where("user_id = ? AND role_id = ?", userId, roleId).First(&model.UserRole{}).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New("该用户无此角色")
+	}
+	var user model.User
+	err = global.DB.Where("id = ?", userId).First(&user).Update("role_id", roleId).Error
+	return &user, err
 }
