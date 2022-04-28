@@ -186,4 +186,4 @@ insert into electricMeter (id) value (1);
 CREATE TABLE `black_list` (
     `id` INT PRIMARY KEY auto_increment,
     `account` bigint unsigned DEFAULT NULL COMMENT '预约人账号'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf 8;

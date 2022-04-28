@@ -274,7 +274,7 @@ func Login(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println("[login]", err.Error())
-		response.FailWithDetailed("400", nil, err.Error(), ctx)
+		response.FailWithDetailed("400", nil, err	.Error(), ctx)
 		return
 	}
 
