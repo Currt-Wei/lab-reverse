@@ -334,10 +334,10 @@ func InitElecMQTT() {
 
 	//mqtt.DEBUG = log.New(os.Stdout, "", 0)
 	//mqtt.ERROR = log.New(os.Stdout, "", 0)
-	opts := mqtt.NewClientOptions().AddBroker("tcp://222.201.144.170:51883").SetClientID("lab_reserve_system")
+	opts := mqtt.NewClientOptions().AddBroker("tcp://8.134.75.76:51883").SetClientID("lab_reserve_system")
 
-	opts.SetUsername("b3351")
-	opts.SetPassword("scutb3351-mqtt")
+	opts.SetUsername("SCUT2022")
+	opts.SetPassword("Scut&2022-mqtt")
 	opts.SetKeepAlive(1 * time.Hour)
 	// 设置消息回调处理函数
 	opts.SetDefaultPublishHandler(f)
