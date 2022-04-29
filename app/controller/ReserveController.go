@@ -51,7 +51,7 @@ func ReserveSeat(c *gin.Context) {
 
 	if b==true{
 		c.JSON(http.StatusOK, gin.H{
-			"status": constant.RefuseApplyFail,
+			"status": constant.ReserveSeatFail,
 			"data":   "黑名单用户无法预约座位",
 		})
 		return
