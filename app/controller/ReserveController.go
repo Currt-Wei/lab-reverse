@@ -19,7 +19,7 @@ func ReserveSeat(c *gin.Context) {
 		return
 	}
 
-	b,err:=model.RepeatReserve(r.LabName,r.ReserveDate,r.TimeInterval)
+	b,err:=model.RepeatReserve(r.LabName,r.ReserveDate,r.TimeInterval,r.Account)
 	if b==true{
 		c.JSON(http.StatusOK, gin.H{
 			"status": constant.AddSeatFail,
