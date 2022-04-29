@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/cipher"
 	"crypto/des"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -266,7 +267,8 @@ func Login(ctx *gin.Context) {
 
 	// todo 密码对称加密
 	key := "bosseeff"
-	plainText, err := desCBCDecrypt([]byte(loginUser.Password), []byte(key))
+	pass,_:=hex.DecodeString(loginUser.Password)
+	plainText, err := desCBCDecrypt(pass, []byte(key))
 	loginUser.Password=string(plainText)
 
 	// 登录
