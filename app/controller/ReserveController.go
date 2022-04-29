@@ -37,25 +37,25 @@ func ReserveSeat(c *gin.Context) {
 	}
 
 
-	// todo 黑名单功能
-	//b,err=model.InBlackList(r.Account)
-	//
-	//if err!=nil{
-	//	c.JSON(http.StatusInternalServerError, gin.H{
-	//		"status": constant.ReserveSeatFail,
-	//		"msg":    err.Error(),
-	//		"data":   "添加失败",
-	//	})
-	//	return
-	//}
-	//
-	//if b==true{
-	//	c.JSON(http.StatusOK, gin.H{
-	//		"status": constant.RefuseApplyFail,
-	//		"data":   "黑名单用户无法预约座位",
-	//	})
-	//	return
-	//}
+	//todo 黑名单功能
+	b,err=model.InBlackList(r.Account)
+
+	if err!=nil{
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": constant.ReserveSeatFail,
+			"msg":    err.Error(),
+			"data":   "添加失败",
+		})
+		return
+	}
+
+	if b==true{
+		c.JSON(http.StatusOK, gin.H{
+			"status": constant.RefuseApplyFail,
+			"data":   "黑名单用户无法预约座位",
+		})
+		return
+	}
 
 	u,err := model.GetUserByAccount(r.Account)
 	r.UserName=u.Name
