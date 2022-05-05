@@ -29,7 +29,7 @@ func InitRouter() {
 	r.POST("/login", controller.Login)
 	r.POST("/send-verification-code", controller.SendVerificationCode)
 	r.POST("/getInsideWeather", controller.GetInsideWeather)
-	r.POST("/saveElectricMeterData", controller.SaveElectricMeterData)
+	//r.POST("/saveElectricMeterData", controller.SaveElectricMeterData)
 	r.GET("/getHistoryElectricMeterData", controller.GetHistoryElectricMeterData)
 	r.POST("/getOutsideWeather", controller.GetOutsideWeather)
 	r.POST("/entranceGuard", controller.EntranceGuard)

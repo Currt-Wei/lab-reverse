@@ -151,6 +151,7 @@ CREATE TABLE `user_role` (
 
 CREATE TABLE electricMeter (
    `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '电表表的主键',
+   `time` varchar(100) not null,
    `voltageA` int default 0,
    `voltageB` int default 0,
    `voltageC` int default 0,
@@ -181,9 +182,32 @@ CREATE TABLE electricMeter (
    `temperature` int default 1,
    PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-insert into electricMeter (id) value (1);
+insert into electricMeter (id,time) value (1,'00:00');
+insert into electricMeter (id,time) value (2,'01:00');
+insert into electricMeter (id,time) value (3,'02:00');
+insert into electricMeter (id,time) value (4,'03:00');
+insert into electricMeter (id,time) value (5,'04:00');
+insert into electricMeter (id,time) value (6,'05:00');
+insert into electricMeter (id,time) value (7,'06:00');
+insert into electricMeter (id,time) value (8,'07:00');
+insert into electricMeter (id,time) value (9,'08:00');
+insert into electricMeter (id,time) value (10,'09:00');
+insert into electricMeter (id,time) value (11,'10:00');
+insert into electricMeter (id,time) value (12,'11:00');
+insert into electricMeter (id,time) value (13,'12:00');
+insert into electricMeter (id,time) value (14,'13:00');
+insert into electricMeter (id,time) value (15,'14:00');
+insert into electricMeter (id,time) value (16,'15:00');
+insert into electricMeter (id,time) value (17,'16:00');
+insert into electricMeter (id,time) value (18,'17:00');
+insert into electricMeter (id,time) value (19,'18:00');
+insert into electricMeter (id,time) value (20,'19:00');
+insert into electricMeter (id,time) value (21,'20:00');
+insert into electricMeter (id,time) value (22,'21:00');
+insert into electricMeter (id,time) value (23,'22:00');
+insert into electricMeter (id,time) value (24,'23:00');
 
 CREATE TABLE `black_list` (
     `id` INT PRIMARY KEY auto_increment,
     `account` bigint unsigned DEFAULT NULL COMMENT '预约人账号'
-) ENGINE=InnoDB DEFAULT CHARSET=utf 8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

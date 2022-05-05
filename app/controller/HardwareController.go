@@ -37,34 +37,34 @@ func GetInsideWeather(ctx *gin.Context){
 	})
 }
 
-func SaveElectricMeterData(ctx *gin.Context){
-	var e model.ElectricMeterData
-
-	if err := ctx.ShouldBindJSON(&e); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status": 401,
-			"msg":    "保存失败",
-			"data":   err.Error(),
-		})
-		return
-	}
-
-	elec:=model.ElecDataChange(e)
-
-	err:=model.SaveElectricMeterData(elec)
-
-	if err!=nil{
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"msg": "保存失败",
-		})
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg": "保存成功",
-	})
-}
+//func SaveElectricMeterData(ctx *gin.Context){
+//	var e model.ElectricMeterData
+//
+//	if err := ctx.ShouldBindJSON(&e); err != nil {
+//		ctx.JSON(http.StatusBadRequest, gin.H{
+//			"status": 401,
+//			"msg":    "保存失败",
+//			"data":   err.Error(),
+//		})
+//		return
+//	}
+//
+//	elec:=model.ElecDataChange(e)
+//
+//	err:=model.SaveElectricMeterData(elec)
+//
+//	if err!=nil{
+//		ctx.JSON(http.StatusInternalServerError, gin.H{
+//			"code": 500,
+//			"msg": "保存失败",
+//		})
+//	}
+//
+//	ctx.JSON(http.StatusOK, gin.H{
+//		"code": 200,
+//		"msg": "保存成功",
+//	})
+//}
 
 
 func GetHistoryElectricMeterData(ctx *gin.Context){

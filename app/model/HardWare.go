@@ -19,9 +19,11 @@ type ElectricMeterData struct {
 	Neutral int `json:"neutral"`
 	Frequency int `json:"frequency"`
 	Temperature int `json:"temperature"`
+	T string `json:time`
 }
 
 type ElectricMeter struct {
+	T string `json:"time" gorm:"column:time"`
 	VoltageA int `json:"voltageA" gorm:"column:voltageA"`
 	VoltageB int `json:"voltageB" gorm:"column:voltageB"`
 	VoltageC int `json:"voltageC" gorm:"column:voltageC"`
@@ -163,7 +165,20 @@ func MyElecCB(c mqtt.Client,msg mqtt.Message){
 		Temperature=ans.Data
 	}
 
-
+	var electricMeterData ElectricMeterData
+	electricMeterData.Voltage=Vol
+	electricMeterData.Current=Cur
+	electricMeterData.Active_power=ActivePower
+	electricMeterData.Reactive_power=ReactivePower
+	electricMeterData.Apparent_power=ApparentPower
+	electricMeterData.Factor=Fac
+	electricMeterData.Angel=Ang
+	electricMeterData.Neutral=Neutral
+	electricMeterData.Frequency=Frequency
+	electricMeterData.Temperature=Temperature
+	timeStr:=time.Now ().Format ("2006-01-02 15:04:05")
+	str:=timeStr[11:13]
+	SaveElectricMeterData(ElecDataChange(electricMeterData),str)
 }
 
 type AVA struct {
@@ -507,6 +522,7 @@ func GetHistoryInsideWeather() (InnerLive,error){
 
 func ElecDataChange(e ElectricMeterData) ElectricMeter{
 	data :=ElectricMeter{}
+	data.T=e.T
 	data.Temperature=e.Temperature
 	data.Frequency=e.Frequency
 	data.Neutral=e.Neutral
@@ -538,46 +554,53 @@ func ElecDataChange(e ElectricMeterData) ElectricMeter{
 	return data
 }
 
-func ElecDataChange_back(e ElectricMeter) ElectricMeterData{
-	var data ElectricMeterData
-	data.Temperature=e.Temperature
-	data.Frequency=e.Frequency
-	data.Neutral=e.Neutral
-	data.Angel.AngelA=e.AngelA
-	data.Angel.AngelB=e.AngelB
-	data.Angel.AngelC=e.AngelC
-	data.Factor.FactorTotal=e.FactorTotal
-	data.Factor.FactorA=e.FactorA
-	data.Factor.FactorB=e.FactorB
-	data.Factor.FactorC=e.FactorC
-	data.Apparent_power.PowerTotal=e.Apparent_powerTotal
-	data.Apparent_power.Apparent_powerA=e.Apparent_powerA
-	data.Apparent_power.Apparent_powerB=e.Apparent_powerB
-	data.Apparent_power.Apparent_powerC=e.Apparent_powerC
-	data.Reactive_power.PowerTotal=e.Reactive_powerTotal
-	data.Reactive_power.Reactive_powerA=e.Reactive_powerA
-	data.Reactive_power.Reactive_powerB=e.Reactive_powerB
-	data.Reactive_power.Reactive_powerC=e.Reactive_powerC
-	data.Active_power.PowerTotal=e.Active_powerTotal
-	data.Active_power.Active_powerA=e.Active_powerA
-	data.Active_power.Active_powerB=e.Active_powerB
-	data.Active_power.Active_powerC=e.Active_powerC
-	data.Current.CurrentA=e.CurrentA
-	data.Current.CurrentB=e.CurrentB
-	data.Current.CurrentC=e.CurrentC
-	data.Voltage.VoltageA=e.VoltageA
-	data.Voltage.VoltageB=e.VoltageB
-	data.Voltage.VoltageC=e.VoltageC
-	return data
+func ElecDataChange_back(es []ElectricMeter) []ElectricMeterData{
+	var datas []ElectricMeterData
+	for _,e:=range es{
+		var data ElectricMeterData
+		data.T=e.T
+		data.Temperature=e.Temperature
+		data.Frequency=e.Frequency
+		data.Neutral=e.Neutral
+		data.Angel.AngelA=e.AngelA
+		data.Angel.AngelB=e.AngelB
+		data.Angel.AngelC=e.AngelC
+		data.Factor.FactorTotal=e.FactorTotal
+		data.Factor.FactorA=e.FactorA
+		data.Factor.FactorB=e.FactorB
+		data.Factor.FactorC=e.FactorC
+		data.Apparent_power.PowerTotal=e.Apparent_powerTotal
+		data.Apparent_power.Apparent_powerA=e.Apparent_powerA
+		data.Apparent_power.Apparent_powerB=e.Apparent_powerB
+		data.Apparent_power.Apparent_powerC=e.Apparent_powerC
+		data.Reactive_power.PowerTotal=e.Reactive_powerTotal
+		data.Reactive_power.Reactive_powerA=e.Reactive_powerA
+		data.Reactive_power.Reactive_powerB=e.Reactive_powerB
+		data.Reactive_power.Reactive_powerC=e.Reactive_powerC
+		data.Active_power.PowerTotal=e.Active_powerTotal
+		data.Active_power.Active_powerA=e.Active_powerA
+		data.Active_power.Active_powerB=e.Active_powerB
+		data.Active_power.Active_powerC=e.Active_powerC
+		data.Current.CurrentA=e.CurrentA
+		data.Current.CurrentB=e.CurrentB
+		data.Current.CurrentC=e.CurrentC
+		data.Voltage.VoltageA=e.VoltageA
+		data.Voltage.VoltageB=e.VoltageB
+		data.Voltage.VoltageC=e.VoltageC
+		datas=append(datas, data)
+	}
+	return datas
+
 }
 
-func SaveElectricMeterData(e ElectricMeter) error{
-	return DB.Model(&ElectricMeter{}).Where("id",1).Updates(e).Error
+func SaveElectricMeterData(e ElectricMeter, t string) error{
+	t=t+":00"
+	return DB.Model(&ElectricMeter{}).Where("time",t).Updates(e).Error
 
 }
 
-func GetHistoryElectricMeterData() (ElectricMeter,error){
-	var data ElectricMeter
-	err := DB.Where("id = ?", 1).Find(&data).Error
+func GetHistoryElectricMeterData() ([]ElectricMeter,error){
+	var data []ElectricMeter
+	err := DB.Where("id > ?", 0).Find(&data).Error
 	return data,err
 }
